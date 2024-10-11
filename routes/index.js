@@ -1,16 +1,13 @@
 import express from 'express';
-const router = express.Router();
+import electionRoutes from './electionRoutes.js';
 
-import candidateRoutes from './candidateRoutes.js';
-import partyRoutes from './partyRoutes.js';
-import voteRoutes from './voteRoutes.js';
+const router = express.Router();
 
 router.get('/', (req, res) => {
 	res.send(router.stack);
 });
 
-router.use('/candidates', candidateRoutes);
-router.use('/parties', partyRoutes);
-router.use('/vote', voteRoutes);
+router.use('/election', electionRoutes);
+
 
 export default router;
