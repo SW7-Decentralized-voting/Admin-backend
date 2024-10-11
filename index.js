@@ -18,8 +18,7 @@ app.listen(PORT, async () => {
   // eslint-disable-next-line no-console
   console.log(`Server is running on port ${PORT}`);
   // generate and print jwt token
-  const token = jwt.sign
-  (
+  const token = jwt.sign(
     {
       user: 'admin',
       role: 'admin'
@@ -29,5 +28,5 @@ app.listen(PORT, async () => {
       expiresIn: '24h'
     }
   );
-  console.log("Token: ", token);
+  console.log('Token: ', token);
 });
