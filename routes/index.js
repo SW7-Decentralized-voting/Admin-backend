@@ -1,5 +1,6 @@
 import express from 'express';
 import electionRoutes from './electionRoutes.js';
+import candidateRoutes from './candidateRoutes.js';
 
 const router = express.Router();
 
@@ -8,6 +9,7 @@ router.get('/', (req, res) => {
 });
 
 router.use('/election', electionRoutes);
+router.use('/candidate', candidateRoutes);
 
 
 export default router;
