@@ -5,6 +5,12 @@ import { verifyToken } from '../utils/verifyToken.js';
 const router = express.Router();
 
 // Route for starting an election with no arguments except a token
+/**
+ * Route for starting an election with no arguments except a token
+ * @param {Express.Request} req Request object with a token in the headers
+ * @param {Express.Response} res Response object with a status code and a JSON object
+ * @returns {Express.Response} Response object with a status code and a JSON object
+ */
 router.post('/start', (req, res) => {
   const token = req.headers.authorization;
   try {
