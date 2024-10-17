@@ -28,4 +28,24 @@ router.post('/start', async (req, res) => {
 }
 });
 
+// Receive Merkle tree and add to database?
+router.post('/send-tree', async (req, res) => {
+  const token = req.headers.authorization;
+  try {
+  if (!token) {
+    return res.status(401).json({ error: 'No token provided' });
+  }
+
+  const decoded = verifyToken(token);
+  if (!decoded) {
+    return res.status(401).json({ error: 'Invalid token' });
+  }
+
+  const tree = req.body.tree;
+  await redisClient.publish('sendTree', JSON.stringify({ tree }));
+} catch {
+  return res.status(500).json({ error: 'Internal server error' });
+}
+});
+
 export default router;
