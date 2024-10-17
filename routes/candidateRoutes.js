@@ -1,6 +1,6 @@
 import express from 'express';
 import { addCandidate } from '../controllers/candidate.js';
-import { verifyToken } from '../utils/verifyToken.js';
+import { auth } from '../middleware/verifyToken.js';
 
 const router = express.Router();
 
@@ -16,18 +16,8 @@ const router = express.Router();
  *  "party": "Independent"
  * }
  */
-router.post('/add', (req, res) => {
-  const token = req.headers.authorization;
-  try {
-  if (!token) {
-    return res.status(401).json({ error: 'No token provided' });
-  }
-
-  const decoded = verifyToken(token);
-  if (!decoded) {
-    return res.status(401).json({ error: 'Invalid token' });
-  }
-
+router.post('/add', auth, (req, res) => {
+try {
   addCandidate(req, res);
 } catch {
   return res.status(500).json({ error: 'Internal server error' });

@@ -9,18 +9,22 @@ const url = process.env.BLOCKCHAIN_URL + '/election';
  * @param {Express.Response} res HTTP response
  * @returns 
  */
-async function startElection(req, res) {
-  try {
-    const response = await axios.post(`${url}/start`);
-    return res.status(200).json(response.data);
-  } catch (error) {
-    return res.status(500).json({ error: error.message });
-  }
+function startElection(res) {
+  return axios.post(`${url}/start`)
+    .then(response => {
+      return res.status(200).json(response.data);
+    })
+    .catch(error => {
+      if (error.response.status === 404) {
+        return res.status(500).json({ error: 'Blockchain service cannot be reached' });
+      }
+      return res.status(error.response.status).json(error.response.data);
+    });
 }
 
 /** TODO: add tree to mongodb
 async function addTreeToDatabase(tree) {
  
 }
-**/ 
+**/
 export { startElection };
