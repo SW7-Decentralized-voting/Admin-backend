@@ -10,6 +10,7 @@ const key = process.env.JWT_KEY;
 const app = express();
 const PORT = process.env.PORT || 8888;
 
+app.use(express.json());
 app.use(cors);
 app.use('/api/v1', router);
 
@@ -28,5 +29,6 @@ app.listen(PORT, async () => {
       expiresIn: '24h'
     }
   );
+  // eslint-disable-next-line no-console
   console.log('Token: ', token);
 });

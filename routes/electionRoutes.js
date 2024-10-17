@@ -14,19 +14,19 @@ const router = express.Router();
 router.post('/start', (req, res) => {
   const token = req.headers.authorization;
   try {
-  if (!token) {
-    return res.status(401).json({ error: 'No token provided' });
-  }
+    if (!token) {
+      return res.status(401).json({ error: 'No token provided' });
+    }
 
-  const decoded = verifyToken(token);
-  if (!decoded) {
-    return res.status(401).json({ error: 'Invalid token' });
-  }
+    const decoded = verifyToken(token);
+    if (!decoded) {
+      return res.status(401).json({ error: 'Invalid token' });
+    }
 
-  startElection(req, res);
-} catch {
-  return res.status(500).json({ error: 'Internal server error' });
-}
+    startElection(req, res);
+  } catch {
+    return res.status(500).json({ error: 'Internal server error' });
+  }
 });
 
 export default router;
