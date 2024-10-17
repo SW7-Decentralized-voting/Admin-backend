@@ -14,7 +14,7 @@ export async function startElection(req, res) {
 
   // Validate voterCount
   if (!voterCount || voterCount < 1) {
-    return res.status(400).json({ error: 'Invalid voterCount' });
+    return res.status(400).json({ error: 'Invalid number of voters' });
   }
 
   try {
