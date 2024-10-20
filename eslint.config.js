@@ -17,7 +17,7 @@ export default [
       "no-empty": "error",
       ...jsdoc.configs.recommended.rules,
     },
-    ignores: ["node_modules/", "eslint.config.js"],
+    ignores: ["node_modules/", "eslint.config.js", "**/schemas/*"],
     languageOptions: {
       globals: globals.node,
     },
