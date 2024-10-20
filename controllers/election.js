@@ -1,13 +1,14 @@
 import dotenv from 'dotenv';
 import axios from 'axios';
+import { Express } from 'express';
 
 dotenv.config();
 const url = process.env.BLOCKCHAIN_URL + '/election';
 
 /**
- * @param {Express.Request} req Token header and numKeys in body
+ * Start an election on the blockchain
  * @param {Express.Response} res HTTP response
- * @returns 
+ * @returns {Express.Response} Success or error message
  */
 function startElection(res) {
   return axios.post(`${url}/start`)
@@ -22,9 +23,9 @@ function startElection(res) {
     });
 }
 
-/** TODO: add tree to mongodb
+/* TODO: add tree to mongodb
 async function addTreeToDatabase(tree) {
  
 }
-**/
+*/
 export { startElection };

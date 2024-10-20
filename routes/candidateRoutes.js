@@ -1,6 +1,7 @@
 import express from 'express';
 import { addCandidate } from '../controllers/candidate.js';
 import { auth } from '../middleware/verifyToken.js';
+import { Express } from 'express';
 
 const router = express.Router();
 

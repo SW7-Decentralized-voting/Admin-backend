@@ -4,7 +4,6 @@ import process from 'process';
 import cors from './config/cors.js';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
-import redisClient from './utils/redisClient.js';
 
 dotenv.config();
 const key = process.env.JWT_KEY;
@@ -31,5 +30,6 @@ app.listen(PORT, async () => {
       expiresIn: '24h'
     }
   );
+  // eslint-disable-next-line no-console
   console.log('Token: ', token);
 });
