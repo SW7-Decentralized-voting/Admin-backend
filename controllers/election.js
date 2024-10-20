@@ -1,34 +1,31 @@
 import dotenv from 'dotenv';
 import axios from 'axios';
+import * as e from 'express';
 
 dotenv.config();
 const url = process.env.BLOCKCHAIN_URL + '/election';
 
 /**
- * @param {Express.Request} req Token header and numKeys in body
- * @param {Express.Response} res HTTP response
- * @returns 
+ * Start an election on the blockchain
+ * @param {e.Response} res HTTP response object
+ * @returns {e.Response} Success or error message
  */
-export async function startElection(req, res) {
-  const voterCount = req.body.voterCount;
-
-  // Validate voterCount
-  if (!voterCount || voterCount < 1) {
-    return res.status(400).json({ error: 'Invalid number of voters' });
-  }
-
-  try {
-    const response = await axios.post(
-      `${url}/start`,
-      { numKeys: voterCount },
-      {
-        headers: {
-          'Content-Type': 'application/json',
-        },
+function startElection(res) {
+  return axios.post(`${url}/start`)
+    .then(response => {
+      return res.status(200).json(response.data);
+    })
+    .catch(error => {
+      if (error.response.status === 404) {
+        return res.status(500).json({ error: 'Blockchain service cannot be reached' });
       }
-    );
-    return res.status(200).json(response.data);
-  } catch (error) {
-    return res.status(500).json({ error: error.message });
-  }
+      return res.status(error.response.status).json(error.response.data);
+    });
 }
+
+/* TODO: add tree to mongodb
+async function addTreeToDatabase(tree) {
+ 
+}
+*/
+export { startElection };
