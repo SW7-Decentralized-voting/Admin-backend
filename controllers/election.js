@@ -1,14 +1,14 @@
 import dotenv from 'dotenv';
 import axios from 'axios';
-import { Express } from 'express';
+import * as e from 'express';
 
 dotenv.config();
 const url = process.env.BLOCKCHAIN_URL + '/election';
 
 /**
  * Start an election on the blockchain
- * @param {Express.Response} res HTTP response
- * @returns {Express.Response} Success or error message
+ * @param {e.Response} res HTTP response object
+ * @returns {e.Response} Success or error message
  */
 function startElection(res) {
   return axios.post(`${url}/start`)
