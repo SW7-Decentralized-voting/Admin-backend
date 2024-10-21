@@ -1,23 +1,35 @@
-import dotenv from 'dotenv';
-import axios from 'axios';
 import * as e from 'express';
-
-dotenv.config();
-const url = process.env.BLOCKCHAIN_URL + '/candidate';
+import Candidate from '../schemas/Candidate.js';
+import validationError from '../utils/validationError.js';
 
 /**
- * Add a candidate to the blockchain
+ * Add a candidate to the database
  * @param {e.Request} req Token header and numKeys in body
  * @param {e.Response} res HTTP response
  * @returns {e.Response} Success or error message
  */
 async function addCandidate(req, res) {
-  try {
-    const response = await axios.post(`${url}/add`, req.body);
-    return res.status(200).json(response.data);
-  } catch (error) {
-    return res.status(500).json({ error: error.message });
-  }
+  const candidate = req.body;
+  const newCandidate = new Candidate(candidate);
+  newCandidate.save()
+    .then(() => {
+      return res.status(200).json({
+        message: 'Candidate added successfully',
+        candidate: newCandidate,
+      });
+    })
+    .catch((error) => {
+      if (error.name === 'ValidationError') {
+        return res.status(400).json({
+          errors: validationError(error),
+        });
+      }
+      // eslint-disable-next-line no-console
+      console.error(`Error adding candidate: ${error.message}`);
+      return res.status(500).json({
+        error: 'An unexpected error occured while adding candidate',
+      });
+    });
 }
 
 export { addCandidate };
