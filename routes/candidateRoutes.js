@@ -4,7 +4,7 @@ import { auth } from '../middleware/verifyToken.js';
 
 const router = express.Router();
 
-// Route for adding a candidate to the blockchain
+// Route for adding a candidate to the database
 router.post('/add', auth, (req, res) => {
 try {
   addCandidate(req, res);

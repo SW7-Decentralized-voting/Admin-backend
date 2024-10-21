@@ -23,9 +23,4 @@ function startElection(res) {
     });
 }
 
-/* TODO: add tree to mongodb
-async function addTreeToDatabase(tree) {
- 
-}
-*/
 export { startElection };

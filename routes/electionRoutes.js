@@ -9,9 +9,4 @@ router.post('/start', auth, async (req, res) => {
   startElection(res);
 });
 
-// Receive Merkle tree and add to database?
-router.post('/send-tree', auth, async (req, res) => {
-  return res.status(200).json({ message: 'Tree received' });
-});
-
 export default router;

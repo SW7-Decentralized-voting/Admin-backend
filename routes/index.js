@@ -9,7 +9,7 @@ router.get('/', (req, res) => {
 });
 
 router.use('/election', electionRoutes);
-router.use('/candidate', candidateRoutes);
+router.use('/candidates', candidateRoutes);
 
 
 export default router;
