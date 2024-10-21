@@ -11,10 +11,7 @@ router.post('/start', auth, async (req, res) => {
 
 // Receive Merkle tree and add to database?
 router.post('/send-tree', auth, async (req, res) => {
-  try {
-  } catch {
-    return res.status(500).json({ error: 'Internal server error' });
-  }
+  return res.status(200).json({ message: 'Tree received' });
 });
 
 export default router;
