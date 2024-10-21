@@ -16,7 +16,6 @@ app.use('/api/v1', router);
 
 
 app.listen(PORT, async () => {
-  //await redisClient.connect();
   // eslint-disable-next-line no-console
   console.log(`Server is running on port ${PORT}`);
   // generate and print jwt token
