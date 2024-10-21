@@ -6,11 +6,7 @@ const router = express.Router();
 
 // Route for adding a candidate to the database
 router.post('/', auth, (req, res) => {
-  try {
-    addCandidate(req, res);
-  } catch {
-    return res.status(500).json({ error: 'Internal server error' });
-  }
+  addCandidate(req, res);
 });
 
 /*router.patch('/:id', auth, (req, res) => {
