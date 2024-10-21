@@ -1,7 +1,7 @@
 import globals from "globals";
 import pluginJs from "@eslint/js";
 import jest from "eslint-plugin-jest";
-
+import jsdoc from "eslint-plugin-jsdoc";
 
 export default [
   {
@@ -15,12 +15,15 @@ export default [
       "no-unreachable": "error",
       "no-constant-condition": "error",
       "no-empty": "error",
+      ...jsdoc.configs.recommended.rules,
     },
-    ignores: ["node_modules/", "eslint.config.js"],
+    ignores: ["node_modules/", "eslint.config.js", "**/schemas/*"],
     languageOptions: {
       globals: globals.node,
     },
+    plugins: { jsdoc },
   },
+  
   {
     files: ["__test__/*", "**/*.test.js"],
     plugins: { jest },

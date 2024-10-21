@@ -1,13 +1,15 @@
 import dotenv from 'dotenv';
 import axios from 'axios';
+import * as e from 'express';
 
 dotenv.config();
 const url = process.env.BLOCKCHAIN_URL + '/candidate';
 
 /**
- * @param {Express.Request} req Token header and numKeys in body
- * @param {Express.Response} res HTTP response
- * @returns 
+ * Add a candidate to the blockchain
+ * @param {e.Request} req Token header and numKeys in body
+ * @param {e.Response} res HTTP response
+ * @returns {e.Response} Success or error message
  */
 async function addCandidate(req, res) {
   try {
