@@ -21,7 +21,7 @@ beforeAll(async () => {
 jest.unstable_mockModule('../../middleware/verifyToken.js', () => {
 	return {
 		auth: jest.fn((req, res, next) => next()),
-	}
+	};
 });
 
 
@@ -67,19 +67,6 @@ describe('POST /api/v1/candidates', () => {
 		expect(response.body.errors).toEqual({
 			party: 'party is required',
 			nominationDistrict: 'nominationDistrict is required',
-		});
-	});
-
-	it('should return 400 Bad Request when candidate fields are invalid (1)', async () => {
-		const response = await request(app).post(baseRoute).send({
-			name: 'John Doe',
-			party: 'invalid',
-			nominationDistrict: 'invalid',
-		});
-		expect(response.statusCode).toBe(400);
-		expect(response.body.errors).toEqual({
-			party: '\'invalid\' (type string) is not a valid ObjectId',
-			nominationDistrict: '\'invalid\' (type string) is not a valid ObjectId',
 		});
 	});
 

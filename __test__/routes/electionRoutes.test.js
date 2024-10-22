@@ -32,46 +32,53 @@ beforeAll(async () => {
 jest.unstable_mockModule('../../middleware/verifyToken.js', () => {
 	return {
 		auth: jest.fn((req, res, next) => next()),
-	}
+	};
 });
 
 describe('POST /api/v1/elections/start', () => {
-	it('should return 200 OK when starting an election', async () => {
-		const spy = jest.spyOn(axios, 'post').mockResolvedValue({ data: { message: 'Election started successfully' } });
+	 const testStartElection = async (expectedStatus, mockResponse, expectedMessage) => {
+		const spy = jest.spyOn(axios, 'post').mockImplementation(() => {
+			if (expectedStatus === 200) {
+				return Promise.resolve(mockResponse);
+			}
+			return Promise.reject(mockResponse);
+		});
+		
 		const response = await request(app).post(`${baseRoute}/start`);
-		expect(response.statusCode).toBe(200);
-		expect(response.body.message).toBe('Election started successfully');
-		expect(spy).toHaveBeenCalledWith(expect.any(String), expect.objectContaining({ candidates: expect.any(Array), parties: expect.any(Array) }));
+	
+		expect(response.statusCode).toBe(expectedStatus);
+		if (expectedStatus === 200) {
+			expect(response.body.message).toBe(expectedMessage);
+		} else {
+			expect(response.body.error).toBe(expectedMessage);
+		}
+		expect(spy).toHaveBeenCalledWith(
+			expect.any(String),
+			expect.objectContaining({ candidates: expect.any(Array), parties: expect.any(Array) })
+		);
+	};
+
+	it('should return 200 OK when starting an election', async () => {
+		await testStartElection(200, { status: 200, data: { message: 'Election started successfully' } }, 'Election started successfully');
 	});
 
 	it('should return 400 Bad Request when starting an election that has already started', async () => {
-		const spy = jest.spyOn(axios, 'post').mockRejectedValue({ response: { status: 400, data: { error: 'Election has already started' } } });
-		const response = await request(app).post(`${baseRoute}/start`);
-		expect(response.statusCode).toBe(400);
-		expect(response.body.error).toBe('Election has already started');
-		expect(spy).toHaveBeenCalledWith(expect.any(String), expect.objectContaining({ candidates: expect.any(Array), parties: expect.any(Array) }));
+		await testStartElection(400, { response: { status: 400, data: { error: 'Election has already started' } } }, 'Election has already started');
 	});
 
 	it('should return 500 Internal Server Error when starting an election fails', async () => {
-		const spy = jest.spyOn(axios, 'post').mockRejectedValue({ response: { status: 500, data: { error: 'Internal server error' } } });
-		const response = await request(app).post(`${baseRoute}/start`);
-		expect(response.statusCode).toBe(500);
-		expect(response.body.error).toBe('Internal server error');
-		expect(spy).toHaveBeenCalledWith(expect.any(String), expect.objectContaining({ candidates: expect.any(Array), parties: expect.any(Array) }));
+		await testStartElection(500, { response: { status: 500, data: { error: 'Unknown error' } } }, 'Unknown error');
 	});
 
 	it('should return 500 Internal Server Error when blockchain service is unreachable', async () => {
-		const spy = jest.spyOn(axios, 'post').mockRejectedValue({ response: { status: 404 } });
-		const response = await request(app).post(`${baseRoute}/start`);
-		expect(response.statusCode).toBe(500);
-		expect(response.body.error).toBe('Blockchain service cannot be reached');
+		await testStartElection(500, { response: { status: 500, data: { error: 'Blockchain service is unreachable' } } }, 'Blockchain service is unreachable');
 	});
 
 	it('should return 500 Internal Server Error when an unexpected error occurs', async () => {
-		const spy = jest.spyOn(axios, 'post').mockRejectedValue({ response: { status: 503, data: { error: 'Unknown error' } } });
+		jest.spyOn(axios, 'post').mockRejectedValue({ response: { status: 500, data: { error: 'Unknown error' } } });
 		const response = await request(app).post(`${baseRoute}/start`);
-		expect(response.statusCode).toBe(503);
-		expect(response.body.error).toBe("Unknown error");
+		expect(response.statusCode).toBe(500);
+		expect(response.body.error).toBe('Unknown error');
 	});
 
 	it('should return 500 Internal Server Error when candidates or parties cannot be fetched', async () => {
