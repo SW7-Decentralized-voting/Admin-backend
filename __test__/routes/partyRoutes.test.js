@@ -1,6 +1,6 @@
 import request from 'supertest';
 import express from 'express';
-import mongoose, { mongo } from 'mongoose';
+import mongoose from 'mongoose';
 import connectDb from '../setup/connect.js';
 import { jest } from '@jest/globals';
 import Party from '../../schemas/Party.js';
@@ -24,7 +24,7 @@ beforeAll(async () => {
 jest.unstable_mockModule('../../middleware/verifyToken.js', () => {
 	return {
 		auth: jest.fn((req, res, next) => next()),
-	}
+	};
 });
 
 const mongoDbFields = {
@@ -32,7 +32,7 @@ const mongoDbFields = {
 	createdAt: expect.any(String),
 	updatedAt: expect.any(String),
 	__v: expect.any(Number),
-}
+};
 
 describe('POST /api/v1/parties', () => {
 	it('should return 201 Created when party fields are valid', async () => {

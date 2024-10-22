@@ -21,5 +21,5 @@ function generateKey() {
   );
   return token;
 }
-
+// eslint-disable-next-line no-console
 console.log(generateKey());

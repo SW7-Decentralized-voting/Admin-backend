@@ -31,7 +31,7 @@ describe('auth', () => {
 
 	it('should return 401 if token is invalid', () => {
 		req.headers['authorization'] = 'invalidToken';
-		jest.spyOn(jwt, 'verify').mockImplementation(() => { throw new Error() });
+		jest.spyOn(jwt, 'verify').mockImplementation(() => { throw new Error(); });
 
 		auth(req, res, next);
 
