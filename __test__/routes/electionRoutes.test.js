@@ -71,7 +71,7 @@ describe('POST /api/v1/elections/start', () => {
 	});
 
 	it('should return 500 Internal Server Error when blockchain service is unreachable', async () => {
-		await testStartElection(500, { response: { status: 500, data: { error: 'Blockchain service is unreachable' } } }, 'Blockchain service is unreachable');
+		await testStartElection(500, { response: { status: 404, data: { error: 'Blockchain service is unreachable' } } }, 'Blockchain service cannot be reached');
 	});
 
 	it('should return 500 Internal Server Error when an unexpected error occurs', async () => {
