@@ -119,6 +119,7 @@ describe('POST /api/v1/candidates', () => {
 
 	it('should return 500 Internal Server Error when an unexpected error occurs', async () => {
 		jest.spyOn(mongoose.Model.prototype, 'save').mockRejectedValueOnce(new Error('Unexpected error'));
+		jest.spyOn(console, 'error').mockImplementationOnce(() => {});
 		const response = await request(app).post(baseRoute).send({
 			name: 'John Doe',
 			party: new mongoose.Types.ObjectId(),

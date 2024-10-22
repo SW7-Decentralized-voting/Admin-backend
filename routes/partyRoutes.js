@@ -6,11 +6,7 @@ const router = express.Router();
 
 // Route for adding a party to the database
 router.post('/', auth, (req, res) => {
-	try {
-		addParty(req, res);
-	} catch {
-		return res.status(500).json({ error: 'Internal server error' });
-	}
+	addParty(req, res);
 });
 
 export default router;
