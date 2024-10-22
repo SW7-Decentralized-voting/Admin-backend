@@ -22,3 +22,18 @@ jobs:
 
       - name: Run Jest tests
         run: npm run test
+      
+      - name: Upload coverage report
+        run: |
+          mkdir coverage-report
+          cp -r coverage/* coverage-report/
+          echo "Coverage report generated."
+          
+      - name: Comment coverage report on PR
+        uses: thollander/actions-comment-pull-request@v3
+        with:
+          message: |
+            ### Coverage Report
+            \`\`\`
+            $(cat coverage/coverage-summary.json | jq '. | {total: .total, lines: .lines, statements: .statements, branches: .branches, functions: .functions}')
+            \`\`\`
