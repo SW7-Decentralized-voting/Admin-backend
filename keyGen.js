@@ -22,4 +22,4 @@ function generateKey() {
   return token;
 }
 
-generateKey();
+console.log(generateKey());

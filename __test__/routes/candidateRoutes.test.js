@@ -28,7 +28,7 @@ jest.unstable_mockModule('../../middleware/verifyToken.js', () => {
 describe('POST /api/v1/candidates', () => {
 	beforeEach(() => jest.clearAllMocks());
 
-	it('should return 201 OK when candidate fields are valid', async () => {
+	it('should return 201 Created when candidate fields are valid', async () => {
 		const partyId = new mongoose.Types.ObjectId();
 		const nominationDistrictId = new mongoose.Types.ObjectId();
 		const response = await request(app).post(baseRoute).send({

@@ -1,20 +1,6 @@
 import Party from '../schemas/Party.js';
 
 /**
- * Add a party to the database
- * @param {PartyObj} party Party object to be added to the database (name, list)
- * @returns {Promise<{message: string, party: Party}>} Message and party object
- */
-async function addParty(party) {
-	const newParty = new Party(party);
-	await newParty.save();
-	return {
-		message: 'Party added successfully',
-		party: newParty,
-	};
-}
-
-/**
  * Get all parties from the database
  * @returns {Promise<Array<Party>>} List of all parties
  */
@@ -23,7 +9,7 @@ async function getAllParties() {
 	return parties;
 }
 
-export { addParty, getAllParties };
+export { getAllParties };
 
 /**
  * @typedef {object} PartyObj
