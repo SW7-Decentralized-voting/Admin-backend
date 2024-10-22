@@ -35,7 +35,7 @@ const mongoDbFields = {
 }
 
 describe('POST /api/v1/parties', () => {
-	it('should return 201 OK when party fields are valid', async () => {
+	it('should return 201 Created when party fields are valid', async () => {
 		const response = await request(app).post(baseRoute).send({
 			name: 'New Party',
 			list: 'P',
