@@ -3,6 +3,10 @@ import express from 'express';
 import mongoose from 'mongoose';
 import connectDb from '../setup/connect.js';
 import { jest } from '@jest/globals';
+import Candidate from '../../schemas/Candidate.js';
+import populateDb from '../db/testPopulation.js';
+import NominationDistrict from '../../schemas/NominationDistrict.js';
+import Party from '../../schemas/Party.js';
 
 let router;
 const baseRoute = '/api/v1/candidates';
@@ -16,6 +20,8 @@ const server = app.listen(0);
 beforeAll(async () => {
 	connectDb();
 	router = (await import('../../routes/candidateRoutes.js')).default;
+
+	await populateDb();
 });
 
 jest.unstable_mockModule('../../middleware/verifyToken.js', () => {
@@ -43,7 +49,7 @@ describe('POST /api/v1/candidates', () => {
 			party: partyId.toString(),
 			nominationDistrict: nominationDistrictId.toString(),
 			_id: expect.any(String),
-			createdAt: expect.any(String), 
+			createdAt: expect.any(String),
 			updatedAt: expect.any(String),
 			__v: expect.any(Number),
 		});
@@ -106,7 +112,7 @@ describe('POST /api/v1/candidates', () => {
 
 	it('should return 500 Internal Server Error when an unexpected error occurs', async () => {
 		jest.spyOn(mongoose.Model.prototype, 'save').mockRejectedValueOnce(new Error('Unexpected error'));
-		jest.spyOn(console, 'error').mockImplementationOnce(() => {});
+		jest.spyOn(console, 'error').mockImplementationOnce(() => { });
 		const response = await request(app).post(baseRoute).send({
 			name: 'John Doe',
 			party: new mongoose.Types.ObjectId(),
@@ -115,6 +121,101 @@ describe('POST /api/v1/candidates', () => {
 
 		expect(response.statusCode).toBe(500);
 		expect(response.body.error).toBe('An unexpected error occurred while adding candidate');
+	});
+});
+
+describe('PATCH /api/v1/candidates/:id', () => {
+	let candidate, party, nominationDistrict;
+	beforeEach(async () => {
+		jest.clearAllMocks()
+		candidate = await Candidate.findOne();
+		party = await Party.findOne();
+		nominationDistrict = await NominationDistrict.findOne();
+	});
+
+	const testUpdateCandidate = async (candidateId, fields, expectedStatus, expectedBody) => {
+		const response = await request(app).patch(`${baseRoute}/${candidateId}`).send(fields);
+		expect(response.statusCode).toBe(expectedStatus);
+		expect(response.body).toEqual(expectedBody);
+	};
+
+	it('should return 200 OK when updating a candidate', async () => {
+		await testUpdateCandidate(candidate._id, {
+			name: 'John Doe',
+			party: party._id,
+			nominationDistrict: nominationDistrict._id,
+		}, 200, {
+			message: 'Candidate updated successfully',
+			candidate: expect.objectContaining({
+				name: 'John Doe',
+				party: party._id.toString(),
+				nominationDistrict: nominationDistrict._id.toString(),
+				_id: candidate._id.toString(),
+				createdAt: expect.any(String),
+				updatedAt: expect.any(String),
+				__v: expect.any(Number),
+			}),
+		});
+	});
+
+	it('should return 404 Not Found when candidate does not exist', async () => {
+		const candidateId = new mongoose.Types.ObjectId();
+		const response = await request(app).patch(`${baseRoute}/${candidateId}`).send({
+			name: 'John Doe',
+			party: party._id,
+			nominationDistrict: nominationDistrict._id,
+		});
+
+		expect(response.statusCode).toBe(404);
+		expect(response.body.error).toBe('Candidate with id \'' + candidateId + '\' not found');
+	});
+
+	const testInvalidCandidateFields = async (fields, expectedErrors) => {
+		const response = await request(app).patch(`${baseRoute}/${candidate._id}`).send(fields);
+		console.log(response.body);
+		expect(response.statusCode).toBe(400);
+		expect(response.body.errors).toEqual(expectedErrors);
+	};
+
+	it('should return 400 Bad Request when candidate fields are invalid (1)', async () => {
+		await testInvalidCandidateFields(
+			{
+				name: 'John Doe',
+				party: 'invalid',
+				nominationDistrict: 'invalid',
+			},
+			{
+				party: '\'invalid\' (type string) is not a valid ObjectId',
+				nominationDistrict: '\'invalid\' (type string) is not a valid ObjectId',
+			}
+		);
+	});
+
+	it('should return 400 Bad Request when candidate fields are invalid (2)', async () => {
+		await testInvalidCandidateFields(
+			{
+				name: 'John Doe',
+				party: 13542,
+				nominationDistrict: 34889,
+			},
+			{
+				party: '\'13542\' (type number) is not a valid ObjectId',
+				nominationDistrict: '\'34889\' (type number) is not a valid ObjectId',
+			}
+		);
+	});
+
+	it('should return 500 Internal Server Error when an unexpected error occurs', async () => {
+		jest.spyOn(Candidate, 'findByIdAndUpdate').mockRejectedValueOnce(new Error('Unexpected error'));
+		jest.spyOn(console, 'error').mockImplementationOnce(() => { });
+		const response = await request(app).patch(`${baseRoute}/${candidate._id}`).send({
+			name: 'John Doe',
+			party: party._id,
+			nominationDistrict: nominationDistrict._id,
+		});
+
+		expect(response.statusCode).toBe(500);
+		expect(response.body).toBe('An unexpected error occurred while updating candidate');
 	});
 });
 

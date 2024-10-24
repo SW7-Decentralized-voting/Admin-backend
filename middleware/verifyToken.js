@@ -14,6 +14,7 @@ const key = process.env.JWT_KEY;
  */
 export function auth(req, res, next) {
   const token = req.headers['authorization'];
+  console.log("token", token);
 
   if (!token) {
     return res.status(401).json({ message: 'No token provided' });

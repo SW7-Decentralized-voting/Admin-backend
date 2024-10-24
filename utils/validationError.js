@@ -1,3 +1,5 @@
+import mongoose from 'mongoose';
+
 /**
  * Formats a mongoose validation error into a more readable format
  * @param {ValidationError} error The validation error object from mongoose
@@ -21,6 +23,22 @@ export default function validationError(error) {
 
 	return errorList;
 }
+
+function checkIdsAndGiveErrors(idList) {
+	let errorList = {};
+	for (const obj of idList) {
+		if (obj.id === undefined) {
+			continue;
+		}
+		if (!mongoose.Types.ObjectId.isValid(obj.id)) {
+			errorList[obj.name] = `'${obj.id}' (type ${typeof obj.id}) is not a valid ObjectId`;
+		};
+	}
+
+	return errorList;
+}
+
+export { checkIdsAndGiveErrors };
 
 /**
  * @typedef {import('mongoose').Error.ValidationError} ValidationError
