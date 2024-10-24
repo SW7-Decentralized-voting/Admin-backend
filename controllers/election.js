@@ -1,6 +1,8 @@
 import dotenv from 'dotenv';
 import axios from 'axios';
 import * as e from 'express';
+import { getAllCandidates } from '../utils/candidateHelpers.js';
+import { getAllParties } from '../utils/partyHelpers.js';
 
 dotenv.config();
 const url = process.env.BLOCKCHAIN_URL + '/election';
@@ -10,8 +12,20 @@ const url = process.env.BLOCKCHAIN_URL + '/election';
  * @param {e.Response} res HTTP response object
  * @returns {e.Response} Success or error message
  */
-function startElection(res) {
-  return axios.post(`${url}/start`)
+async function startElection(res) {
+  let candidates, parties;
+  try {
+    candidates = await getAllCandidates();
+    parties = await getAllParties();
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+
+  return await axios.post(`${url}/start`, {
+    // Add body with all candidates and parties
+    candidates: candidates,
+    parties: parties,
+  })
     .then(response => {
       return res.status(200).json(response.data);
     })
@@ -23,9 +37,4 @@ function startElection(res) {
     });
 }
 
-/* TODO: add tree to mongodb
-async function addTreeToDatabase(tree) {
- 
-}
-*/
 export { startElection };
