@@ -1,5 +1,6 @@
 import Party from '../schemas/Party.js';
 import validationError from '../utils/validationError.js';
+import { validateSingleObjectId } from '../utils/validationError.js';
 
 /**
  * Add a party to the database
@@ -41,6 +42,12 @@ async function updateParty(req, res) {
 	const partyId = req.params.id;
 	const updatedPartyData = req.body;
 
+	// Validate the request
+	const validationErrorResponse = validateUpdateRequest(partyId, updatedPartyData);
+	if (validationErrorResponse) {
+			return res.status(400).json(validationErrorResponse);
+	}
+
 	try {
 			// Find the party by ID and update it
 			const updatedParty = await Party.findByIdAndUpdate(partyId, updatedPartyData, { new: true, runValidators: true });
@@ -67,6 +74,38 @@ async function updateParty(req, res) {
 					error: 'An unexpected error occurred while updating the party',
 			});
 	}
+}
+
+/**
+ * Validate the update request for a party
+ * @param {string} partyId The ID of the party
+ * @param {object} updatedPartyData The update data
+ * @returns {object|null} Error object if validation fails, or null if valid
+ */
+function validateUpdateRequest(partyId, updatedPartyData) {
+	const allowedFields = ['name', 'list'];
+
+	// Validate the partyId
+	if (!validateSingleObjectId(partyId)) {
+			return { error: 'Invalid party ID format' };
+	}
+
+	// Validate that either "name" or "list" is provided in the body
+	if (!updatedPartyData.name && !updatedPartyData.list) {
+			return { error: 'Please provide a name or list to update' };
+	}
+
+	// Check for extra fields in the request body
+	const invalidFields = Object.keys(updatedPartyData).filter(
+			(key) => !allowedFields.includes(key)
+	);
+
+	if (invalidFields.length > 0) {
+			return { error: `Invalid fields in the request body: ${invalidFields.join(', ')}` };
+	}
+
+	// Return null if no validation errors
+	return null;
 }
 
 export { addParty, updateParty };

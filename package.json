@@ -10,7 +10,7 @@
         "dev:server": "nodemon index.js",
         "dev:lint": "nodemon --watch src --exec \"npx eslint .\"",
         "lint": "eslint .",
-        "test": "NODE_OPTIONS='--experimental-vm-modules' jest --runInBand",
+        "test": "cross-env NODE_OPTIONS=--experimental-vm-modules jest --runInBand",
         "test2": "jest"
     },
     "repository": {
@@ -37,6 +37,7 @@
     },
     "devDependencies": {
         "@eslint/js": "^9.11.1",
+        "cross-env": "^7.0.3",
         "eslint": "^9.11.1",
         "eslint-plugin-jest": "^28.8.3",
         "eslint-plugin-jsdoc": "^50.4.3",

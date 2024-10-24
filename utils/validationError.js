@@ -24,13 +24,30 @@ export default function validationError(error) {
 	return errorList;
 }
 
+/**
+ * Validates a single ObjectId
+ * @param {string} id - The MongoDB ObjectId to validate
+ * @returns {boolean} - Returns true if the ObjectId is valid, otherwise false
+ */
+function validateSingleObjectId(id) {
+	if (!mongoose.Types.ObjectId.isValid(id)) {
+		return false;
+	}
+	return true;
+}
+
+/**
+ * Validates a list of ObjectIds and returns a list of errors if any invalid
+ * @param {Array<{id: string, name: string}>} idList - List of objects containing ObjectId and field names
+ * @returns {{[key: string]: string}} - A list of errors with the field name as the key and the error message as the value
+ */
 function checkIdsAndGiveErrors(idList) {
 	let errorList = {};
 	for (const obj of idList) {
 		if (obj.id === undefined) {
 			continue;
 		}
-		if (!mongoose.Types.ObjectId.isValid(obj.id)) {
+		if (!validateSingleObjectId(obj.id)) {
 			errorList[obj.name] = `'${obj.id}' (type ${typeof obj.id}) is not a valid ObjectId`;
 		}
 	}
@@ -38,8 +55,4 @@ function checkIdsAndGiveErrors(idList) {
 	return errorList;
 }
 
-export { checkIdsAndGiveErrors };
-
-/**
- * @typedef {import('mongoose').Error.ValidationError} ValidationError
- */
+export { validateSingleObjectId, checkIdsAndGiveErrors };
