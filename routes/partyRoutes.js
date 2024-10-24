@@ -1,5 +1,5 @@
 import express from 'express';
-import { addParty, updateParty  } from '../controllers/party.js';
+import { addParty, updateParty, deleteParty } from '../controllers/party.js';
 import { auth } from '../middleware/verifyToken.js';
 
 const router = express.Router();
@@ -12,6 +12,11 @@ router.post('/', auth, (req, res) => {
 // Route for editing a party in the database
 router.patch('/:id', auth, (req, res) => {
 	updateParty(req, res);
+});
+
+// Route for deleting a party from the database
+router.delete('/:id', auth, (req, res) => {
+	deleteParty(req, res);
 });
 
 export default router;

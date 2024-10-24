@@ -77,7 +77,46 @@ async function updateParty(req, res) {
 }
 
 /**
- * Validate the update request for a party
+ * Delete a party from the database
+ * @param {Request} req Request object containing the party ID in the params
+ * @param {Response} res Express response object to send the response
+ * @returns {Response} Success or error message
+ */
+async function deleteParty(req, res) {
+	const partyId = req.params.id;
+
+	// Validate the partyId
+	if (!validateSingleObjectId(partyId)) {
+			return res.status(400).json({
+					error: 'Invalid party ID format',
+			});
+	}
+
+	try {
+			// Find the party by ID and remove it
+			const deletedParty = await Party.findByIdAndDelete(partyId);
+
+			if (!deletedParty) {
+					return res.status(204).json({
+							error: 'Party not found',
+					});
+			}
+
+			return res.status(200).json({
+					message: 'Party deleted successfully',
+					party: deletedParty,
+			});
+	} catch (error) {
+			// eslint-disable-next-line no-console
+			console.error(`Error deleting party: ${error.message}`);
+			return res.status(500).json({
+					error: 'An unexpected error occurred while deleting the party',
+			});
+	}
+}
+
+/**
+ * Validate the request for a party with an id in the params
  * @param {string} partyId The ID of the party
  * @param {object} updatedPartyData The update data
  * @returns {object|null} Error object if validation fails, or null if valid
@@ -108,7 +147,7 @@ function validateUpdateRequest(partyId, updatedPartyData) {
 	return null;
 }
 
-export { addParty, updateParty };
+export { addParty, updateParty, deleteParty };
 
 /**
  * @import { Request, Response } from 'express';

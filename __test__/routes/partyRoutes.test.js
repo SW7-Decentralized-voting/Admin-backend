@@ -190,7 +190,7 @@ describe('PATCH /api/v1/parties/:id', () => {
 
 	it('should return 400 Bad Request when name is shorter than 2 characters', async () => {
 			const response = await request(app).patch(`${baseRoute}/${partyId}`).send({
-					name: "a",
+					name: 'a',
 			});
 			expect(response.statusCode).toBe(400);
 			expect(response.body.errors).toEqual({
@@ -200,7 +200,7 @@ describe('PATCH /api/v1/parties/:id', () => {
 
 	it('should return 400 Bad Request when name is longer than 100 characters', async () => {
 		const response = await request(app).patch(`${baseRoute}/${partyId}`).send({
-				name: "a".repeat(101),
+				name: 'a'.repeat(101),
 		});
 		expect(response.statusCode).toBe(400);
 		expect(response.body.errors).toEqual({
@@ -210,7 +210,7 @@ describe('PATCH /api/v1/parties/:id', () => {
 
 	it('should return 400 Bad Request when list is more than one character', async () => {
 		const response = await request(app).patch(`${baseRoute}/${partyId}`).send({
-				list: "abc",
+				list: 'abc',
 		});
 		expect(response.statusCode).toBe(400);
 		expect(response.body.errors).toEqual({
@@ -220,7 +220,7 @@ describe('PATCH /api/v1/parties/:id', () => {
 
 	it('should return 400 Bad Request when list is not one uppercase letter', async () => {
 		const response = await request(app).patch(`${baseRoute}/${partyId}`).send({
-				list: "a",
+				list: 'a',
 		});
 		expect(response.statusCode).toBe(400);
 		expect(response.body.errors).toEqual({
