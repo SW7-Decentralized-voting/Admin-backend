@@ -6,7 +6,7 @@ const router = express.Router();
 
 // Route for adding a candidate to the database
 router.post('/', auth, (req, res) => {
-  addCandidate(req, res);
+    addCandidate(req, res);
 });
 
 /*router.patch('/:id', auth, (req, res) => {
