@@ -139,12 +139,8 @@ describe('PATCH /api/v1/candidates/:id', () => {
 		expect(response.body).toEqual(expectedBody);
 	};
 
-	it('should return 200 OK when updating a candidate', async () => {
-		await testUpdateCandidate(candidate._id, {
-			name: 'John Doe',
-			party: party._id,
-			nominationDistrict: nominationDistrict._id,
-		}, 200, {
+	const successBody = (candidate) => {
+		return {
 			message: 'Candidate updated successfully',
 			candidate: expect.objectContaining({
 				name: 'John Doe',
@@ -154,8 +150,16 @@ describe('PATCH /api/v1/candidates/:id', () => {
 				createdAt: expect.any(String),
 				updatedAt: expect.any(String),
 				__v: expect.any(Number),
-			}),
-		});
+			})
+		};
+	};
+
+	it('should return 200 OK when updating a candidate', async () => {
+		await testUpdateCandidate(candidate._id, {
+			name: 'John Doe',
+			party: party._id,
+			nominationDistrict: nominationDistrict._id,
+		}, 200, successBody(candidate));
 	});
 
 	it('should return 404 Not Found when candidate does not exist', async () => {
@@ -172,7 +176,6 @@ describe('PATCH /api/v1/candidates/:id', () => {
 
 	const testInvalidCandidateFields = async (fields, expectedErrors) => {
 		const response = await request(app).patch(`${baseRoute}/${candidate._id}`).send(fields);
-		console.log(response.body);
 		expect(response.statusCode).toBe(400);
 		expect(response.body.errors).toEqual(expectedErrors);
 	};
@@ -205,6 +208,28 @@ describe('PATCH /api/v1/candidates/:id', () => {
 		);
 	});
 
+	it('should return 400 Bad Request when candidate fields are invalid (3)', async () => {
+		await testInvalidCandidateFields(
+			{
+				name: 'Jo',
+				party: party._id,
+				nominationDistrict: nominationDistrict._id,
+			},
+			{
+				name: 'Name must be longer than 2 characters.',
+			}
+		);
+	});
+
+	it('should ignore invalid fields in the request body', async () => {
+		await testUpdateCandidate(candidate._id, {
+			name: 'John Doe',
+			party: party._id,
+			nominationDistrict: nominationDistrict._id,
+			invalidField: 'invalid',
+		}, 200, successBody(candidate));
+	});
+
 	it('should return 500 Internal Server Error when an unexpected error occurs', async () => {
 		jest.spyOn(Candidate, 'findByIdAndUpdate').mockRejectedValueOnce(new Error('Unexpected error'));
 		jest.spyOn(console, 'error').mockImplementationOnce(() => { });
@@ -214,8 +239,8 @@ describe('PATCH /api/v1/candidates/:id', () => {
 			nominationDistrict: nominationDistrict._id,
 		});
 
+		expect(response.body.error).toBe('An unexpected error occurred while updating candidate');
 		expect(response.statusCode).toBe(500);
-		expect(response.body).toBe('An unexpected error occurred while updating candidate');
 	});
 });
 

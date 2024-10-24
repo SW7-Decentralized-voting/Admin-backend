@@ -37,13 +37,17 @@ async function addCandidate(req, res) {
   }
 }
 
+/**
+ * Update a candidate in the database by ID
+ * @param {Request} req Request object containing the candidate object in the body and the candidate ID in the params
+ * @param {Response} res Express response object to send the response
+ * @returns {Response} Success or error message
+ */
 async function updateCandidate(req, res) {
   const { id } = req.params;
   const candidate = req.body;
 
   const idErrs = checkIdsAndGiveErrors([{ name: 'party', id: candidate.party }, { name: 'nominationDistrict', id: candidate.nominationDistrict }]);
-
-  console.log(idErrs);
 
   if (Object.keys(idErrs).length > 0) {
     return res.status(400).json({

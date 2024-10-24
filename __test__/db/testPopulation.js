@@ -5,6 +5,9 @@ import Candidate from '../../schemas/Candidate.js';
 import mockData from './mockData';
 import { districtsWithIds, candidateWithIds } from './addIds';
 
+/**
+ * Populate the database with mock data
+ */
 export default async function populateDb() {
 	await Party.insertMany(mockData.parties);
 	await Constituency.insertMany(mockData.constituencies);

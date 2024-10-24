@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 
 /**
  * Formats a mongoose validation error into a more readable format
- * @param {ValidationError} error The validation error object from mongoose
+ * @param {Error.ValidationError} error The validation error object from mongoose
  * @returns {{[key: string]: string}} A list of errors with the field name as the key and the error message as the value
  */
 export default function validationError(error) {
@@ -33,6 +33,10 @@ function validateSingleObjectId(id) {
 	if (!mongoose.Types.ObjectId.isValid(id)) {
 		return false;
 	}
+
+	if (new mongoose.Types.ObjectId(id).toString() !== id) {
+		return false;
+	}
 	return true;
 }
 
@@ -56,3 +60,7 @@ function checkIdsAndGiveErrors(idList) {
 }
 
 export { validateSingleObjectId, checkIdsAndGiveErrors };
+
+/**
+ * @import { Error } from 'mongoose'
+ */
