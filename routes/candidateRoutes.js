@@ -1,5 +1,5 @@
 import express from 'express';
-import { addCandidate, updateCandidate } from '../controllers/candidate.js';
+import { addCandidate, updateCandidate, deleteCandidate } from '../controllers/candidate.js';
 import { auth } from '../middleware/verifyToken.js';
 
 const router = express.Router();
@@ -11,6 +11,10 @@ router.post('/', auth, (req, res) => {
 
 router.patch('/:id', auth, (req, res) => {
   updateCandidate(req, res);
+});
+
+router.delete('/:id', auth, (req, res) => {
+  deleteCandidate(req, res);
 });
 
 export default router;

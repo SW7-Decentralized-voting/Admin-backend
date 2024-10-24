@@ -1,5 +1,5 @@
 import Candidate from '../schemas/Candidate.js';
-import validationError, { checkIdsAndGiveErrors } from '../utils/validationError.js';
+import validationError, { checkIdsAndGiveErrors, validateSingleObjectId } from '../utils/validationError.js';
 
 /**
  * Add a candidate to the database
@@ -83,7 +83,37 @@ async function updateCandidate(req, res) {
   }
 }
 
-export { addCandidate, updateCandidate };
+async function deleteCandidate(req, res) {
+  const { id } = req.params;
+
+
+  try {
+    const deletedCandidate = await Candidate.findByIdAndDelete(id);
+
+    if (!deletedCandidate) {
+      return res.status(204).send();
+    }
+
+    return res.status(200).json({
+      message: 'Candidate deleted successfully',
+      candidate: deletedCandidate,
+    });
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    if (error.name === 'CastError') {
+      return res.status(400).json({
+        error: '\'' + id + '\' (type ' + typeof id + ') is not a valid ObjectId',
+      });
+    }
+
+    console.error(`Error deleting candidate: ${error.message}`);
+    return res.status(500).json({
+      error: 'An unexpected error occurred while deleting candidate',
+    });
+  }
+}
+
+export { addCandidate, updateCandidate, deleteCandidate };
 
 /**
  * @import { Request, Response } from 'express';

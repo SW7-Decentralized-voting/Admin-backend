@@ -244,6 +244,49 @@ describe('PATCH /api/v1/candidates/:id', () => {
 	});
 });
 
+describe('DELETE /api/v1/candidates/:id', () => {
+	let candidate;
+	beforeEach(async () => {
+		jest.clearAllMocks();
+		candidate = await Candidate.findOne();
+	});
+
+	it('should return 200 OK when deleting a candidate', async () => {
+		const response = await request(app).delete(`${baseRoute}/${candidate._id}`);
+		expect(response.statusCode).toBe(200);
+		expect(response.body.message).toBe('Candidate deleted successfully');
+		expect(response.body.candidate).toMatchObject({
+			name: candidate.name,
+			party: candidate.party.toString(),
+			nominationDistrict: candidate.nominationDistrict.toString(),
+			_id: candidate._id.toString(),
+			createdAt: candidate.createdAt.toISOString(),
+			updatedAt: candidate.updatedAt.toISOString(),
+			__v: candidate.__v,
+		});
+	});
+
+	it('should return 204 Not Found when candidate does not exist', async () => {
+		const candidateId = new mongoose.Types.ObjectId();
+		const response = await request(app).delete(`${baseRoute}/${candidateId}`);
+		expect(response.statusCode).toBe(204);
+	});
+
+	it('should return 400 Bad Request when candidate ID format is invalid', async () => {
+		const response = await request(app).delete(`${baseRoute}/invalidId`);
+		expect(response.statusCode).toBe(400);
+		expect(response.body.error).toBe('\'' + 'invalidId' + '\' (type string) is not a valid ObjectId');
+	});
+
+	it('should return 500 Internal Server Error when an unexpected error occurs', async () => {
+		jest.spyOn(Candidate, 'findByIdAndDelete').mockRejectedValueOnce(new Error('Unexpected error'));
+		jest.spyOn(console, 'error').mockImplementationOnce(() => { });
+		const response = await request(app).delete(`${baseRoute}/${candidate._id}`);
+		expect(response.statusCode).toBe(500);
+		expect(response.body.error).toBe('An unexpected error occurred while deleting candidate');
+	});
+});
+
 afterAll(async () => {
 	await mongoose.connection.close();
 	server.close();
