@@ -127,7 +127,7 @@ describe('POST /api/v1/candidates', () => {
 describe('PATCH /api/v1/candidates/:id', () => {
 	let candidate, party, nominationDistrict;
 	beforeEach(async () => {
-		jest.clearAllMocks()
+		jest.clearAllMocks();
 		candidate = await Candidate.findOne();
 		party = await Party.findOne();
 		nominationDistrict = await NominationDistrict.findOne();

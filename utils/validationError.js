@@ -32,7 +32,7 @@ function checkIdsAndGiveErrors(idList) {
 		}
 		if (!mongoose.Types.ObjectId.isValid(obj.id)) {
 			errorList[obj.name] = `'${obj.id}' (type ${typeof obj.id}) is not a valid ObjectId`;
-		};
+		}
 	}
 
 	return errorList;
