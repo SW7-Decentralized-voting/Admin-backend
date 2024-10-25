@@ -280,8 +280,8 @@ describe('DELETE /api/v1/parties/:id', () => {
 			jest.spyOn(Party, 'findByIdAndDelete').mockRejectedValue(new Error('Unexpected error'));
 			jest.spyOn(console, 'error').mockImplementation(() => {}); // Silence error logging for this test
 			const response = await request(app).delete(`${baseRoute}/${partyId}`);
-			expect(response.statusCode).toBe(500);
 			expect(response.body.error).toBe('An unexpected error occurred while deleting the party');
+			expect(response.statusCode).toBe(500);
 	});
 });
 

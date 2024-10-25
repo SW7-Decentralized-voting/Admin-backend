@@ -1,6 +1,6 @@
 // Make tests for the validationError function in utils/validationError.js
 
-import validationError, { checkIdsAndGiveErrors } from '../../utils/validationError.js';
+import validationError, { checkIdsAndGiveErrors, validateSingleObjectId } from '../../utils/validationError.js';
 
 describe('validationError', () => {
 	it('should return an object with relevant errors based on mongoose error (1)', () => {
@@ -131,5 +131,49 @@ describe('checkIdsAndGiveErrors', () => {
 		];
 		const result = checkIdsAndGiveErrors(idList);
 		expect(result).toEqual({});
+	});
+});
+
+describe('validateSingleObjectId', () => {
+	it('should return true if the ObjectId is valid', () => {
+		const id = '507f1f77bcf86cd799439011';
+		const result = validateSingleObjectId(id);
+		expect(result).toBe(true);
+	});
+
+	it('should return false if the ObjectId is invalid', () => {
+		const id = 'invalid';
+		const result = validateSingleObjectId(id);
+		expect(result).toBe(false);
+	});
+
+	it('should return false if the ObjectId is invalid (2)', () => {
+		const id = '507f1f77bcf86cd7994390111';
+		const result = validateSingleObjectId(id);
+		expect(result).toBe(false);
+	});
+
+	it('should return false if the ObjectId is invalid (3)', () => {
+		const id = '507f1f77bcf86cd79943901';
+		const result = validateSingleObjectId(id);
+		expect(result).toBe(false);
+	});
+
+	it('should return false if the ObjectId is invalid (4)', () => {
+		const id = 412894278;
+		const result = validateSingleObjectId(id);
+		expect(result).toBe(false);
+	});
+
+	it('should return false if the ObjectId is invalid (5)', () => {
+		const id = null;
+		const result = validateSingleObjectId(id);
+		expect(result).toBe(false);
+	});
+
+	it('should return false if the ObjectId is invalid (6)', () => {
+		const id = 853023948512;
+		const result = validateSingleObjectId(id);
+		expect(result).toBe(false);
 	});
 });
