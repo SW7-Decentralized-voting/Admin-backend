@@ -97,9 +97,7 @@ async function deleteParty(req, res) {
 			const deletedParty = await Party.findByIdAndDelete(partyId);
 
 			if (!deletedParty) {
-					return res.status(204).json({
-							error: 'Party not found',
-					});
+					return res.status(204).json();
 			}
 
 			return res.status(200).json({

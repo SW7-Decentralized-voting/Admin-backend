@@ -239,6 +239,52 @@ describe('PATCH /api/v1/parties/:id', () => {
 	});
 });
 
+describe('DELETE /api/v1/parties/:id', () => {
+	let partyId;
+
+	beforeAll(async () => {
+			// Get a valid party ID from the mock data
+			const party = await Party.findOne();
+			partyId = party._id;
+	});
+
+	it('should return 200 OK when party is successfully deleted', async () => {
+			const response = await request(app).delete(`${baseRoute}/${partyId}`);
+			expect(response.statusCode).toBe(200);
+			expect(response.body.message).toBe('Party deleted successfully');
+			expect(response.body.party).toMatchObject({
+					_id: partyId.toString(),
+					...mongoDbFields,
+			});
+	});
+
+	it('should return 204 Not Found when the party does not exist', async () => {
+			const nonExistentPartyId = new mongoose.Types.ObjectId(); // Generate a valid but non-existent ObjectId
+			const response = await request(app).delete(`${baseRoute}/${nonExistentPartyId}`);
+			expect(response.statusCode).toBe(204);
+			expect(response.body.error).toBeUndefined();
+	});
+
+	it('should return 400 Bad Request when party ID format is invalid', async () => {
+			const response = await request(app).delete(`${baseRoute}/invalidId`);
+			expect(response.statusCode).toBe(400);
+			expect(response.body.error).toBe('Invalid party ID format');
+	});
+
+	it('should return 404 Bad Request when party ID is not present', async () => {
+		const response = await request(app).delete(`${baseRoute}/`);
+		expect(response.statusCode).toBe(404);
+	});
+
+	it('should return 500 Internal Server Error when an unexpected error occurs', async () => {
+			jest.spyOn(Party, 'findByIdAndDelete').mockRejectedValue(new Error('Unexpected error'));
+			jest.spyOn(console, 'error').mockImplementation(() => {}); // Silence error logging for this test
+			const response = await request(app).delete(`${baseRoute}/${partyId}`);
+			expect(response.statusCode).toBe(500);
+			expect(response.body.error).toBe('An unexpected error occurred while deleting the party');
+	});
+});
+
 afterAll(async () => {
 	server.close();
 	await Party.deleteMany();
