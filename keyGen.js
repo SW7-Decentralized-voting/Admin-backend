@@ -16,7 +16,7 @@ function generateKey() {
     },
     key,
     {
-      expiresIn: '24h'
+      expiresIn: '1h'
     }
   );
   return token;
