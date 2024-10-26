@@ -12,7 +12,7 @@ Routes relating to the election phases
 <details open>
 <summary style="font-size: 1.675rem; font-weight: 500;"> <span style="color: orange; background:rgb(50,50,50); border-radius: 5px; padding: 2px 5px">POST</span> Start election</summary>
 
-```http
+```
 http://localhost:8888/election/start
 ```
 
@@ -68,7 +68,7 @@ Routes relating to the candidates.
 <details open>
 <summary style="font-size: 1.675rem; font-weight: 500;"> <span style="color: orange; background:rgb(50,50,50); border-radius: 5px; padding: 2px 5px">POST</span> Create candidate</summary>
 
-```http
+```
 http://localhost:8888/candidates
 ```
 
@@ -119,7 +119,7 @@ Creates a candidate based on the fields in the body (name, party, nominationDist
 <details open>
 <summary style="font-size: 1.675rem; font-weight: 500;"> <span style="color: magenta; background:rgb(50,50,50); border-radius: 5px; padding: 2px 5px">PATCH</span> Update Candidate</summary>
 
-```http
+```
 http://localhost:8888/candidates/{id}
 ```
 
@@ -174,7 +174,7 @@ Updates an existing candidate with id in params and updates fields in body with 
 <details open>
 <summary style="font-size: 1.675rem; font-weight: 500;"> <span style="color: red; background:rgb(50,50,50); border-radius: 5px; padding: 2px 5px">DELETE</span> Delete Candidate</summary>
 
-```http
+```
 http://localhost:8888/candidates/671cfa07534d2498ace3e213
 ```
 
@@ -241,7 +241,7 @@ Requests relating to the parties
 <details open>
 <summary style="font-size: 1.675rem; font-weight: 500;"> <span style="color: orange; background:rgb(50,50,50); border-radius: 5px; padding: 2px 5px">POST</span> Create Party</summary>
 
-```http
+```
 http://localhost:8888/parties
 ```
 <div style="margin-top: 30px"></div>
@@ -251,7 +251,7 @@ http://localhost:8888/parties
 <details open>
 <summary style="font-size: 1.675rem; font-weight: 500;"> <span style="color: magenta; background:rgb(50,50,50); border-radius: 5px; padding: 2px 5px">PATCH</span> Update Party</summary>
 
-```http
+```
 http://localhost:8888/parties/{{partyId}}
 ```
 <div style="margin-top: 30px"></div>
@@ -261,7 +261,7 @@ http://localhost:8888/parties/{{partyId}}
 <details open>
 <summary style="font-size: 1.675rem; font-weight: 500;"> <span style="color: red; background:rgb(50,50,50); border-radius: 5px; padding: 2px 5px">DELETE</span> New Request</summary>
 
-```http
+```
 http://localhost:8888/parties/{{
 ```
 <div style="margin-top: 30px"></div>
