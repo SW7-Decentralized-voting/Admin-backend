@@ -1,3 +1,15 @@
+<html>
+<style
+  type="text/css">
+  .err-code {
+    color: red;
+    background:rgb(50,50,50);
+    border-radius: 5px;
+    padding: 2px 3px;
+  }
+</style>
+</html>
+
 <span style="font-size: 2.4rem; font-weight: 500"> Admin API</span>
 --
 API for the admin backend
@@ -37,9 +49,7 @@ Starts the election on the blockchain microservice.
 }
 ```
 
-<span style="font-size: 1.4rem"><span style="color: 
-			red; 
-			background:rgb(50,50,50); border-radius: 5px; padding: 2px 3px">
+<span style="font-size: 1.4rem"><span class="err-code">
 			400</span> Already Started:</span>
 
 <div style="margin-top: -12px"></div>
