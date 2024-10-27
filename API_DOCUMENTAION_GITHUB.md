@@ -64,7 +64,7 @@ Routes relating to the candidates.
 >
 > ### Example Responses
 >
-><img src="https://img.shields.io/badge/201-Create_candidate-green.svg" height="30">
+><img src="https://img.shields.io/badge/201-Successful_Response-green.svg" height="30">
 >
 > ```json
 > {
@@ -98,10 +98,10 @@ Routes relating to the candidates.
 
 <img src="https://img.shields.io/badge/PATCH-magenta.svg" > $\huge{\texttt{Update Candidate}}$
 > ```
-> http://localhost:8888/candidates/{id}
+> http://localhost:8888/candidates/671cfa07534d2498ace3e259
 > ```
 > 
-> Updates an existing candidate with id in params and updates fields in body with given values (assuming they can be validated):
+> Updates an existing candidate with id in params and updates fields in body with a subset of its editable values (assuming they can be validated):
 > 
 > | **Param** | **Requirements** |
 > | --- | --- |
@@ -117,7 +117,7 @@ Routes relating to the candidates.
 >
 > ### Example Responses
 >
-><img src="https://img.shields.io/badge/200-Update_Candidate-green.svg" height="30">
+><img src="https://img.shields.io/badge/200-Successful_Response-green.svg" height="30">
 >
 > ```json
 > {
@@ -131,6 +131,24 @@ Routes relating to the candidates.
 >         "createdAt": "2024-10-26T14:17:43.052Z",
 >         "updatedAt": "2024-10-26T15:01:39.478Z"
 >     }
+> }
+> ```
+> 
+><img src="https://img.shields.io/badge/400-Invalid_Name-red.svg" height="30">
+>
+> ```json
+> {
+>     "errors": {
+>         "name": "Name must be longer than 2 characters."
+>     }
+> }
+> ```
+> 
+><img src="https://img.shields.io/badge/404-Candidate_Not_Found-red.svg" height="30">
+>
+> ```json
+> {
+>     "error": "Candidate with id '671cfa07534d2498ace3e259' not found"
 > }
 > ```
 > 
@@ -191,19 +209,143 @@ Requests relating to the parties
 > ```
 > http://localhost:8888/parties
 > ```
-> ><div style="margin-top: 30px"></div>
+> 
+> Creates a party based on the fields in the body.
+> 
+> ## Body
+> 
+> | **Field** | **Requirements** |
+> | --- | --- |
+> | `name` | `String` between 2 and 100 characters. Can contain letters (lower- and uppercase) a-z and æ, ø, å, as well as '-', and whitespaces. |
+> | `list` | `String` of 1 upper-case character (A-Z, Æ, Ø, and Å). |
+>
+> ### Example Responses
+>
+><img src="https://img.shields.io/badge/201-Successful_Response-green.svg" height="30">
+>
+> ```json
+> {
+>     "message": "Party added successfully",
+>     "party": {
+>         "name": "Test Party",
+>         "list": "X",
+>         "_id": "671e81e2de8efa90119a9614",
+>         "createdAt": "2024-10-27T18:09:38.668Z",
+>         "updatedAt": "2024-10-27T18:09:38.668Z",
+>         "__v": 0
+>     }
+> }
+> ```
+> 
+><img src="https://img.shields.io/badge/400-Invalid_Request_Body-red.svg" height="30">
+>
+> ```json
+> {
+>     "errors": {
+>         "list": "list is required",
+>         "name": "Name must be longer than 2 characters."
+>     }
+> }
+> ```
+> 
+<div style="margin-top: 30px"></div>
+
+><div style="margin-top: 30px"></div>
 
 <img src="https://img.shields.io/badge/PATCH-magenta.svg" > $\huge{\texttt{Update Party}}$
 > ```
-> http://localhost:8888/parties/{{partyId}}
+> http://localhost:8888/parties/671cfa06534d2498ace3e1dc
 > ```
-> ><div style="margin-top: 30px"></div>
+> 
+> Updates a party with id given in params with a subset of its editable fields given in the body (assuming they can be validated).
+> 
+> | **Param** | **Requirements** |
+> | --- | --- |
+> | `id` | A valid Mongoose `ObjectId` (24-character hexadecimal string) |
+> 
+> | **Field** | **Requirements** |
+> | --- | --- |
+> | `name` | `String` between 2 and 100 characters. Can contain letters (lower- and uppercase) a-z and æ, ø, å, as well as '-', and whitespaces. |
+> | `list` | `String` of 1 upper-case character (A-Z, Æ, Ø, and Å). |
+>
+> ### Example Responses
+>
+><img src="https://img.shields.io/badge/200-Successful_Response-green.svg" height="30">
+>
+> ```json
+> {
+>     "message": "Party updated successfully",
+>     "party": {
+>         "_id": "671cfa06534d2498ace3e1dc",
+>         "name": "Nordlisten new",
+>         "list": "G",
+>         "__v": 0,
+>         "createdAt": "2024-10-26T14:17:42.687Z",
+>         "updatedAt": "2024-10-27T18:12:33.346Z"
+>     }
+> }
+> ```
+> 
+><img src="https://img.shields.io/badge/400-Invalid_Name-red.svg" height="30">
+>
+> ```json
+> {
+>     "errors": {
+>         "name": "Name must be longer than 2 characters."
+>     }
+> }
+> ```
+> 
+><img src="https://img.shields.io/badge/404-Party_Not_Found-red.svg" height="30">
+>
+> ```json
+> {
+>     "error": "Party not found"
+> }
+> ```
+> 
+<div style="margin-top: 30px"></div>
 
-<img src="https://img.shields.io/badge/DELETE-red.svg" > $\huge{\texttt{New Request}}$
+><div style="margin-top: 30px"></div>
+
+<img src="https://img.shields.io/badge/DELETE-red.svg" > $\huge{\texttt{Delete Party}}$
 > ```
-> http://localhost:8888/parties/{{
+> http://localhost:8888/parties/671cfa06534d2498ace3e121
 > ```
-> ><div style="margin-top: 30px"></div>
+> 
+> Deletes party with id given in param:
+> 
+> | **Param** | **Requirements** |
+> | --- | --- |
+> | `id` | A valid Mongoose `ObjectId` (24-character hexadecimal string) |
+>
+> ### Example Responses
+>
+><img src="https://img.shields.io/badge/200-Successful_Response-green.svg" height="30">
+>
+> ```json
+> {
+>     "message": "Party deleted successfully",
+>     "party": {
+>         "_id": "671cfa06534d2498ace3e1dc",
+>         "name": "Nordlisten new",
+>         "list": "G",
+>         "__v": 0,
+>         "createdAt": "2024-10-26T14:17:42.687Z",
+>         "updatedAt": "2024-10-27T18:12:33.346Z"
+>     }
+> }
+> ```
+> 
+><img src="https://img.shields.io/badge/204-No_Content-green.svg" height="30">
+>
+> ```json
+> undefined
+> ```
+> 
+<div style="margin-top: 30px"></div>
+
+><div style="margin-top: 30px"></div>
 
 </details>
 
