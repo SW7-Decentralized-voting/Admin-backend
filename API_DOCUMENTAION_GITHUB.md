@@ -26,7 +26,7 @@ Routes relating to the election phases
 > }
 > ```
 > 
-><img src="https://img.shields.io/badge/400-Already_Started-red.svg" height="30">
+><img src="https://img.shields.io/badge/400-Election_Already_Started-red.svg" height="30">
 >
 > ```json
 > {
@@ -77,6 +77,17 @@ Routes relating to the candidates.
 >         "createdAt": "2024-10-26T14:27:46.497Z",
 >         "updatedAt": "2024-10-26T14:27:46.497Z",
 >         "__v": 0
+>     }
+> }
+> ```
+> 
+><img src="https://img.shields.io/badge/400-Invalid_Request_Body-red.svg" height="30">
+>
+> ```json
+> {
+>     "errors": {
+>         "nominationDistrict": "'Invalid' (type string) is not a valid ObjectId",
+>         "party": "party is required"
 >     }
 > }
 > ```

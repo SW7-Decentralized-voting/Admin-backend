@@ -94,6 +94,18 @@ Routes relating to the candidates.
 > }
 > ```
 > 
+><span style="color: red; 
+		background:rgb(50,50,50); border-radius: 5px; padding: 2px 3px">400</span>
+>
+> ```json
+> {
+>     "errors": {
+>         "nominationDistrict": "'Invalid' (type string) is not a valid ObjectId",
+>         "party": "party is required"
+>     }
+> }
+> ```
+> 
 <div style="margin-top: 30px"></div>
 
 ><div style="margin-top: 30px"></div>
