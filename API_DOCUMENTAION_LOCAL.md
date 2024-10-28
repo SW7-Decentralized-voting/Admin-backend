@@ -19,7 +19,7 @@ Routes relating to the election phases
 >
 <div style="margin-top: -10px"></div>
 
-> ### Example Responses
+### Example Responses
 >
 <div style="margin-top: -10px"></div>
 
@@ -72,7 +72,7 @@ Routes relating to the candidates.
 >
 <div style="margin-top: -10px"></div>
 
-> ### Example Responses
+### Example Responses
 >
 <div style="margin-top: -10px"></div>
 
@@ -132,7 +132,7 @@ Routes relating to the candidates.
 >
 <div style="margin-top: -10px"></div>
 
-> ### Example Responses
+### Example Responses
 >
 <div style="margin-top: -10px"></div>
 
@@ -192,7 +192,7 @@ Routes relating to the candidates.
 >
 <div style="margin-top: -10px"></div>
 
-> ### Example Responses
+### Example Responses
 >
 <div style="margin-top: -10px"></div>
 
@@ -251,7 +251,7 @@ Requests relating to the parties
 >
 <div style="margin-top: -10px"></div>
 
-> ### Example Responses
+### Example Responses
 >
 <div style="margin-top: -10px"></div>
 
@@ -307,7 +307,7 @@ Requests relating to the parties
 >
 <div style="margin-top: -10px"></div>
 
-> ### Example Responses
+### Example Responses
 >
 <div style="margin-top: -10px"></div>
 
@@ -366,7 +366,7 @@ Requests relating to the parties
 >
 <div style="margin-top: -10px"></div>
 
-> ### Example Responses
+### Example Responses
 >
 <div style="margin-top: -10px"></div>
 
