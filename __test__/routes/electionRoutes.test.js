@@ -3,13 +3,9 @@ import express from 'express';
 import mongoose from 'mongoose';
 import connectDb from '../setup/connect.js';
 import { jest } from '@jest/globals';
-import Party from '../../schemas/Party.js';
-import mockData from '../db/mockData.js';
 import axios from 'axios';
 import Candidate from '../../schemas/Candidate.js';
-import NominationDistrict from '../../schemas/NominationDistrict.js';
-import Constituency from '../../schemas/Constituency.js';
-import { districtsWithIds, candidateWithIds } from '../db/addIds.js';
+import populateDb from '../db/testPopulation.js';
 
 let router;
 const baseRoute = '/api/v1/parties';
@@ -22,10 +18,7 @@ const server = app.listen(0);
 
 beforeAll(async () => {
 	connectDb();
-	await Party.insertMany(mockData.parties);
-	await Constituency.insertMany(mockData.constituencies);
-	await NominationDistrict.insertMany(await districtsWithIds(mockData.nominationDistricts));
-	await Candidate.insertMany(await candidateWithIds(mockData.candidates));
+	await populateDb();
 	router = (await import('../../routes/electionRoutes.js')).default;
 });
 
