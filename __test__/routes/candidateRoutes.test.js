@@ -7,6 +7,7 @@ import Candidate from '../../schemas/Candidate.js';
 import populateDb from '../db/testPopulation.js';
 import NominationDistrict from '../../schemas/NominationDistrict.js';
 import Party from '../../schemas/Party.js';
+import mockData from '../db/mockData.js';
 
 let router;
 const baseRoute = '/api/v1/candidates';
@@ -30,6 +31,66 @@ jest.unstable_mockModule('../../middleware/verifyToken.js', () => {
 	};
 });
 
+describe('GET /api/v1/candidates', () => {
+	beforeEach(() => jest.clearAllMocks());
+
+	it('should return 200 OK and a list of all candidates when no query is given', async () => {
+		const response = await request(app).get(baseRoute);
+		expect(response.statusCode).toBe(200);
+		expect(response.body).toHaveLength(mockData.candidates.length);
+		response.body.forEach(candidate => {
+			expect(candidate).toMatchObject({
+				name: expect.any(String),
+				party: expect.any(String),
+				nominationDistrict: expect.any(String),
+				_id: expect.any(String),
+				createdAt: expect.any(String),
+				updatedAt: expect.any(String),
+				__v: expect.any(Number),
+			});
+		});
+	})
+
+	it('should return 200 OK and a filtered list of candidates when valid query is given', async () => {
+		const partyId = await Party.findOne().then(party => party._id);
+		const candidateCount = await Candidate.find({ party: partyId }).countDocuments();
+		const response = await request(app).get(baseRoute + '?party=' + partyId);
+		console.log(response.body);
+		expect(response.statusCode).toBe(200);
+		expect(response.body).toHaveLength(candidateCount);
+		response.body.forEach(candidate => {
+			expect(candidate).toMatchObject({
+				name: expect.any(String),
+				party: partyId.toString(),
+				nominationDistrict: expect.any(String),
+				_id: expect.any(String),
+				createdAt: expect.any(String),
+				updatedAt: expect.any(String),
+				__v: expect.any(Number),
+			});
+		});
+	});
+
+	it('should return 400 Bad Request when an invalid query is given', async () => {
+		const response = await request(app).get(baseRoute + '?invalidQuery=invalid');
+		expect(response.statusCode).toBe(400);
+		expect(response.body.error).toBe('Invalid query parameter: invalidQuery');
+	});
+
+	it('should return 400 Bad Request when an invalid ID is given in the query', async () => {
+		const response = await request(app).get(baseRoute + '?party=invalidId');
+		expect(response.statusCode).toBe(400);
+		expect(response.body.error).toBe('Invalid ID: invalidId');
+	});
+
+	it('should return 500 Internal Server Error when an unexpected error occurs', async () => {
+		jest.spyOn(Candidate, 'find').mockRejectedValueOnce(new Error('Unexpected error'));
+		jest.spyOn(console, 'error').mockImplementationOnce(() => { });
+		const response = await request(app).get(baseRoute);
+		expect(response.statusCode).toBe(500);
+		expect(response.body.error).toBe('An unexpected error occurred while fetching candidates');
+	});
+});
 
 describe('POST /api/v1/candidates', () => {
 	beforeEach(() => jest.clearAllMocks());
