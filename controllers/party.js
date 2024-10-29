@@ -1,6 +1,39 @@
 import Party from '../schemas/Party.js';
+import handleQuery from '../utils/handleQuery.js';
 import validationError from '../utils/validationError.js';
 import { validateSingleObjectId } from '../utils/validationError.js';
+
+/**
+ * Fetch parties from the database
+ * @param {Request} req Express request object possibly containing query parameters (e.g. name, _id)
+ * @param {Response} res Express response object to send the response
+ * @returns {Response} A list of parties or an error message
+ */
+async function fetchParties(req, res) {
+	try {
+    const query = handleQuery(req.query, Party);
+    const parties = await Party.find(query);
+    return res.status(200).json(parties);
+  } catch (error) {
+    if (error.message.includes('Invalid query parameter')) {
+      return res.status(400).json({
+        error: error.message,
+      });
+    }
+    
+    if (error.name === 'CastError') {
+      return res.status(400).json({
+        error: 'Invalid ID: ' + error.value,
+      });
+    }
+
+    // eslint-disable-next-line no-console
+    console.error(`Error fetching parties: ${error.message}`);
+    return res.status(500).json({
+      error: 'An unexpected error occurred while fetching parties',
+    });
+  }
+}
 
 /**
  * Add a party to the database
@@ -145,7 +178,7 @@ function validateUpdateRequest(partyId, updatedPartyData) {
 	return null;
 }
 
-export { addParty, updateParty, deleteParty };
+export { fetchParties, addParty, updateParty, deleteParty };
 
 /**
  * @import { Request, Response } from 'express';

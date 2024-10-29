@@ -34,6 +34,60 @@ const mongoDbFields = {
 	__v: expect.any(Number),
 };
 
+describe('GET /api/v1/parties', () => {
+	it('should return 200 OK and all parties when no query is given', async () => {
+		const response = await request(app).get(baseRoute);
+		expect(response.statusCode).toBe(200);
+		expect(response.body.length).toBe(mockData.parties.length);
+		response.body.forEach((party) => {
+			expect(party).toMatchObject({
+				...mongoDbFields,
+				name: expect.any(String),
+				list: expect.any(String),
+			});
+		});
+	});
+
+	it('should return 200 OK and filtered parties when a query is given', async () => {
+		const response = await request(app).get(`${baseRoute}?list=U`);
+		expect(response.statusCode).toBe(200);
+		expect(response.body.length).toBe(1);
+		response.body.forEach((party) => {
+			expect(party).toMatchObject({
+				...mongoDbFields,
+				name: expect.any(String),
+				list: 'U',
+			});
+		});
+	});
+
+	it('should return 200 OK and an empty array when no parties match the query', async () => {
+		const response = await request(app).get(`${baseRoute}?list=Z`);
+		expect(response.statusCode).toBe(200);
+		expect(response.body).toEqual([]);
+	});
+
+	it('should return 400 Bad Request when an invalid query is given', async () => {
+		const response = await request(app).get(`${baseRoute}?invalidQuery=invalid`);
+		expect(response.statusCode).toBe(400);
+		expect(response.body.error).toBe('Invalid query parameter: invalidQuery');
+	});
+
+	it('should return 400 Bad Request when an invalid ID is given', async () => {
+		const response = await request(app).get(`${baseRoute}?_id=invalidId`);
+		expect(response.statusCode).toBe(400);
+		expect(response.body.error).toBe('Invalid ID: invalidId');
+	});
+
+	it('should return 500 Internal Server Error when an unexpected error occurs', async () => {
+		jest.spyOn(Party, 'find').mockRejectedValue(new Error('Unexpected error'));
+		jest.spyOn(console, 'error').mockImplementation(() => {});
+		const response = await request(app).get(baseRoute);
+		expect(response.statusCode).toBe(500);
+		expect(response.body.error).toBe('An unexpected error occurred while fetching parties');
+	});
+});
+
 describe('POST /api/v1/parties', () => {
 	it('should return 201 Created when party fields are valid', async () => {
 		const response = await request(app).post(baseRoute).send({

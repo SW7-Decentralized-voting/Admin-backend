@@ -71,6 +71,12 @@ describe('GET /api/v1/candidates', () => {
 		});
 	});
 
+	it('should return 200 OK and an empty list when no candidates match the query', async () => {
+		const response = await request(app).get(baseRoute + '?party=123456789012');
+		expect(response.statusCode).toBe(200);
+		expect(response.body).toHaveLength(0);
+	});
+
 	it('should return 400 Bad Request when an invalid query is given', async () => {
 		const response = await request(app).get(baseRoute + '?invalidQuery=invalid');
 		expect(response.statusCode).toBe(400);
