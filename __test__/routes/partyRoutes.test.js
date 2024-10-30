@@ -17,6 +17,7 @@ const server = app.listen(0);
 
 beforeAll(async () => {
 	connectDb();
+	await Party.deleteMany();
 	await Party.insertMany(mockData.parties);
 	router = (await import('../../routes/partyRoutes.js')).default;
 });
@@ -340,7 +341,7 @@ describe('DELETE /api/v1/parties/:id', () => {
 });
 
 afterAll(async () => {
-	server.close();
 	await Party.deleteMany();
 	await mongoose.connection.close();
+	server.close();
 });

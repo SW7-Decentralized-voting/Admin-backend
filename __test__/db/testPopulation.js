@@ -9,6 +9,10 @@ import { districtsWithIds, candidateWithIds } from './addIds';
  * Populate the database with mock data
  */
 export default async function populateDb() {
+	await Party.deleteMany({});
+	await Constituency.deleteMany({});
+	await NominationDistrict.deleteMany({});
+	await Candidate.deleteMany({});
 	await Party.insertMany(mockData.parties);
 	await Constituency.insertMany(mockData.constituencies);
 	await NominationDistrict.insertMany(await districtsWithIds(mockData.nominationDistricts));

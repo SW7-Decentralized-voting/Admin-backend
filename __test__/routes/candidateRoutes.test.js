@@ -55,7 +55,6 @@ describe('GET /api/v1/candidates', () => {
 		const partyId = await Party.findOne().then(party => party._id);
 		const candidateCount = await Candidate.find({ party: partyId }).countDocuments();
 		const response = await request(app).get(baseRoute + '?party=' + partyId);
-		console.log(response.body);
 		expect(response.statusCode).toBe(200);
 		expect(response.body).toHaveLength(candidateCount);
 		response.body.forEach(candidate => {
@@ -72,7 +71,7 @@ describe('GET /api/v1/candidates', () => {
 	});
 
 	it('should return 200 OK and an empty list when no candidates match the query', async () => {
-		const response = await request(app).get(baseRoute + '?party=123456789012');
+		const response = await request(app).get(baseRoute + '?party=123456789012384920349123');
 		expect(response.statusCode).toBe(200);
 		expect(response.body).toHaveLength(0);
 	});
@@ -355,6 +354,7 @@ describe('DELETE /api/v1/candidates/:id', () => {
 });
 
 afterAll(async () => {
+	await mongoose.connection.db.dropDatabase();
 	await mongoose.connection.close();
 	server.close();
 });
