@@ -33,7 +33,7 @@ jest.unstable_mockModule('../../middleware/verifyToken.js', () => {
 const mockError = (method) => {
 	jest.spyOn(NominationDistrict, method).mockRejectedValue(new Error('Unexpected error'));
 	jest.spyOn(console, 'error').mockImplementation(() => { });
-}
+};
 
 describe('GET /', () => {
 	it('should return all nomination districts if no query is given', async () => {
@@ -120,7 +120,7 @@ describe('POST /', () => {
 				name: 'name is required',
 				constituency: 'constituency is required',
 			},
-		})
+		});
 	});
 
 	const testInvalidFields = async (newNominationDistrict, expectedErrors) => {

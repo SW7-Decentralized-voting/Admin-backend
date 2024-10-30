@@ -6,7 +6,6 @@ import { jest } from '@jest/globals';
 import mockData from '../db/mockData.js';
 import populateDb from '../db/testPopulation.js';
 import NominationDistrict from '../../schemas/NominationDistrict.js';
-import Constituency from '../../schemas/Constituency.js';
 import PollingStation from '../../schemas/PollingStation.js';
 
 let router;
@@ -33,7 +32,7 @@ jest.unstable_mockModule('../../middleware/verifyToken.js', () => {
 const mockError = (method) => {
 	jest.spyOn(PollingStation, method).mockRejectedValue(new Error('Unknown error'));
 	jest.spyOn(console, 'error').mockImplementation(() => { });
-}
+};
 
 const testInvalidErrors = async (method, route, data, expectedErrors) => {
 	const res = await request(app)[method](route).send(data);
@@ -232,7 +231,6 @@ describe('PATCH /:id', () => {
 			nominationDistrict: nominationDistrict._id.toString(),
 			expectedVoters: 100,
 		});
-		console.log(res.body);
 		expect(res.status).toBe(404);
 		expect(res.body.error).toBe('Polling station not found');
 	});

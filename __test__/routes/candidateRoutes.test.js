@@ -49,7 +49,7 @@ describe('GET /api/v1/candidates', () => {
 				__v: expect.any(Number),
 			});
 		});
-	})
+	});
 
 	it('should return 200 OK and a filtered list of candidates when valid query is given', async () => {
 		const partyId = await Party.findOne().then(party => party._id);
