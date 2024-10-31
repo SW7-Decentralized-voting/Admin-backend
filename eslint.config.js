@@ -23,7 +23,13 @@ export default [
     },
     plugins: { jsdoc },
   },
-  
+  {
+    files: ["**/routes/**/*.js"],
+    rules: {
+      "jsdoc/require-jsdoc": "off",
+      "jsdoc/check-tag-names": "off",
+    },
+  },
   {
     files: ["__test__/*", "**/*.test.js"],
     plugins: { jest },
