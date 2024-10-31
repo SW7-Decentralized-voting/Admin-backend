@@ -1,8 +1,13 @@
 import express from 'express';
-import { addParty, updateParty, deleteParty } from '../controllers/party.js';
+import { fetchParties, addParty, updateParty, deleteParty } from '../controllers/party.js';
 import { auth } from '../middleware/verifyToken.js';
 
 const router = express.Router();
+
+// Route for fetching parties from the database
+router.get('/', auth, (req, res) => {
+	fetchParties(req, res);
+});
 
 // Route for adding a party to the database
 router.post('/', auth, (req, res) => {
