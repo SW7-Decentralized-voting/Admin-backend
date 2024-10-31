@@ -52,8 +52,7 @@
             "/node_modules/",
             "/__test__/",
             "/models/",
-            "/config/",
-            "/schemas/"
+            "/config/"
         ],
         "globalSetup": "<rootDir>/__test__/setup/jest-setup.js",
         "globalTeardown": "<rootDir>/__test__/setup/jest-teardown.js",

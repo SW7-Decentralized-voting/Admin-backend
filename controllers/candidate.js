@@ -1,40 +1,12 @@
 import Candidate from '../schemas/Candidate.js';
-import handleQuery from '../utils/handleQuery.js';
 import validationError, { checkIdsAndGiveErrors } from '../utils/validationError.js';
 
-
 /**
- * Fetch candidates from the database
- * @param {Request} req Express request object possibly containing query parameters (e.g. party, nominationDistrict)
+ * Add a candidate to the database
+ * @param {Request} req Request object containing the candidate object in the body
  * @param {Response} res Express response object to send the response
- * @returns {Response} A list of candidates or an error message
+ * @returns {Response} Success or error message
  */
-async function fetchCandidates(req, res) {
-  try {
-    const query = handleQuery(req.query, Candidate);
-    const candidates = await Candidate.find(query);
-    return res.status(200).json(candidates);
-  } catch (error) {
-    if (error.message.includes('Invalid query parameter')) {
-      return res.status(400).json({
-        error: error.message,
-      });
-    }
-    
-    if (error.name === 'CastError') {
-      return res.status(400).json({
-        error: 'Invalid ID: ' + error.value,
-      });
-    }
-
-    // eslint-disable-next-line no-console
-    console.error(`Error fetching candidates: ${error.message}`);
-    return res.status(500).json({
-      error: 'An unexpected error occurred while fetching candidates',
-    });
-  }
-}
-
 /**
  * Add a candidate to the database
  * @param {Request} req Request object containing the candidate object in the body
@@ -147,7 +119,7 @@ async function deleteCandidate(req, res) {
   }
 }
 
-export { fetchCandidates, addCandidate, updateCandidate, deleteCandidate };
+export { addCandidate, updateCandidate, deleteCandidate };
 
 /**
  * @import { Request, Response } from 'express';

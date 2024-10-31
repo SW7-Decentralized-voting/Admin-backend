@@ -83,6 +83,6 @@ describe('POST /api/v1/elections/start', () => {
 });
 
 afterAll(async () => {
-	await mongoose.connection.close();
 	server.close();
+	await mongoose.connection.close();
 });
