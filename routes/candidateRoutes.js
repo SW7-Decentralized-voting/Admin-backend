@@ -52,10 +52,48 @@ router.post('/', auth, (req, res) => {
   addCandidate(req, res);
 });
 
+/**
+ * @swagger
+ * /candidates/{id}:
+ *  patch:
+ *   tags: [Candidates]
+ *   summary: Update a candidate
+ *   description: Update a candidate in the database
+ *   security: [Authorization: []]
+ *   parameters:
+ *    - $ref: '#/components/parameters/candidate/patch/id'
+ *   requestBody:
+ *    $ref: '#/components/reqBody/candidate'
+ *   responses:
+ *    200:
+ *     $ref: '#/components/responses/candidate/200/patch'
+ *    400:
+ *     $ref: '#/components/responses/candidate/400/patch'
+ *    401:
+ *     $ref: '#/components/responses/general/401'
+ */
 router.patch('/:id', auth, (req, res) => {
   updateCandidate(req, res);
 });
 
+/**
+ * @swagger
+ * /candidates/{id}:
+ *  delete:
+ *   tags: [Candidates]
+ *   summary: Delete a candidate
+ *   description: Delete a candidate from the database
+ *   security: [Authorization: []]
+ *   parameters:
+ *    - $ref: '#/components/parameters/candidate/delete/id'
+ *   responses:
+ *    200:
+ *     $ref: '#/components/responses/candidate/200/delete'
+ *    204:
+ *     $ref: '#/components/responses/candidate/204'
+ *    401:
+ *     $ref: '#/components/responses/general/401'
+ */
 router.delete('/:id', auth, (req, res) => {
   deleteCandidate(req, res);
 });

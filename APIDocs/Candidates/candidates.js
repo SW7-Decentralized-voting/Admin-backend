@@ -57,6 +57,28 @@ const params = {
 			},
 		},
 	},
+	patch: {
+		id: {
+			in: 'path',
+			name: 'id',
+			required: true,
+			description: 'The ID of the candidate to update\n\n **Example:** `5f9f4b9c8b3d2b0017f7f2b8`',
+			schema: {
+				type: 'string'
+			},
+		},
+	},
+	delete: {
+		id: {
+			in: 'path',
+			name: 'id',
+			required: true,
+			description: 'The ID of the candidate to delete\n\n **Example:** `5f9f4b9c8b3d2b0017f7f2b8`',
+			schema: {
+				type: 'string'
+			},
+		},
+	}
 };
 
 const reqBody = {
@@ -181,6 +203,54 @@ const candidateResponses = {
 					}
 				}
 			}
+		},
+		patch: {
+			description: '**OK** \n\n Returns a success message and the updated candidate',
+			content: {
+				'application/json': {
+					schema: {
+						type: 'object',
+						properties: {
+							message: {
+								type: 'string'
+							},
+							candidate: Candidate
+						},
+					},
+					example: {
+						message: 'Candidate updated successfully',
+						candidate: {
+							...candidateList[0],
+							name: 'John Doe Jr.',
+							updatedAt: '2020-11-01T12:00:00.000Z',
+							__v: 0
+						}
+					}
+				}
+			}
+		},
+		delete: {
+			description: '**OK** \n\n Returns a success message and the deleted candidate',
+			content: {
+				'application/json': {
+					schema: {
+						type: 'object',
+						properties: {
+							message: {
+								type: 'string'
+							},
+							candidate: Candidate
+						},
+					},
+					example: {
+						message: 'Candidate deleted successfully',
+						candidate: {
+							...candidateList[0],
+							__v: 0
+						}
+					}
+				}
+			}
 		}
 	},
 	400: {
@@ -251,6 +321,41 @@ const candidateResponses = {
 					}
 				}
 			}
+		},
+		patch: {
+			description: '**Bad request** \n\n Error message is returned when an invalid ID is provided or a validation error occurs',
+			content: {
+				'application/json': {
+					schema: {
+						type: 'object',
+						properties: {
+							error: {
+								type: 'string'
+							}
+						},
+					},
+					examples: {
+						Example1: {
+							summary: 'Invalid id in path',
+							value: {
+								error: 'Candidate with id \'5f9f4b9c8b3d2b0017f7f2b8\' not found'
+							}
+						},
+						Example2: {
+							summary: 'Invalid name in body',
+							value: {
+								name: "Name must be longer than 2 characters."
+							}
+						},
+						Example3: {
+							summary: 'Invalid id in body',
+							value: {
+								party: "'14943' (type number) is not a valid ObjectId"
+							}
+						}
+					}
+				}
+			}
 		}
 	},
 	201: {
@@ -285,6 +390,16 @@ const candidateResponses = {
 						}
 					},
 				}
+			}
+		}
+	},
+	204: {
+		description: '**No Content** \n\n Returns an empty response when the candidate is not found',
+		content: {
+			'application/json': {
+				schema: {
+					type: 'object',
+				},
 			}
 		}
 	}
