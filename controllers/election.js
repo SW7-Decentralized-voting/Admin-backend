@@ -25,12 +25,6 @@ async function startElection(res) {
     return res.status(500).json({ error: error.message });
   }
 
-  console.log({
-    candidates: candidates,
-    parties: parties,
-    publicKey: keyPair.publicKey
-  });
-
   return await axios.post(`${url}/start`, {
     // Add body with all candidates and parties
     candidates: candidates,
