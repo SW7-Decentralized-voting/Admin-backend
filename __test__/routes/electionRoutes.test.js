@@ -2,10 +2,11 @@ import request from 'supertest';
 import express from 'express';
 import mongoose from 'mongoose';
 import connectDb from '../setup/connect.js';
-import { it, jest } from '@jest/globals';
+import { it, jest, expect } from '@jest/globals';
 import axios from 'axios';
 import Candidate from '../../schemas/Candidate.js';
 import populateDb from '../db/testPopulation.js';
+import KeyPair from '../../schemas/KeyPair.js';
 
 let router;
 const baseRoute = '/api/v1/parties';
@@ -53,6 +54,19 @@ describe('POST /api/v1/elections/start', () => {
 
 	it('should return 200 OK when starting an election', async () => {
 		await testStartElection(200, { status: 200, data: { message: 'Election started successfully' } }, 'Election started successfully');
+	});
+
+	it('should add a key pair to the database when starting an election', async () => {
+		await KeyPair.deleteMany();
+		await request(app).post(`${baseRoute}/start`);
+		const keyPair = await KeyPair.findOne();
+		const pubKey = keyPair.publicKey;
+		const privKey = keyPair.privateKey;
+
+		expect(pubKey).toEqual(expect.stringMatching(/-----BEGIN PUBLIC KEY-----(.|\n)+-----END PUBLIC KEY-----\n/));
+		expect(privKey).toEqual(expect.stringMatching(/-----BEGIN PRIVATE KEY-----(.|\n)+-----END PRIVATE KEY-----\n/));
+
+		await KeyPair.deleteMany();
 	});
 
 	it('should return 400 Bad Request when starting an election that has already started', async () => {
