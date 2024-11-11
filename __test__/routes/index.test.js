@@ -2,7 +2,7 @@
 
 import request from 'supertest';
 import express from 'express';
-import router from '../../routes/index.js'; // Adjust the import path to where your route is located
+import router from '../../routes/index.js';
 const baseRoute = '/api/v1';
 
 const app = express();

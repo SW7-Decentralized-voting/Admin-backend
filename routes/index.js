@@ -5,6 +5,7 @@ import partyRoutes from './partyRoutes.js';
 import nominationDistrictRoutes from './nominationDistrictRoutes.js';
 import constituencyRoutes from './constituencyRoutes.js';
 import pollingStationRoutes from './pollingStationRoutes.js';
+import keyRoutes from './keyRoutes.js';
 
 const router = express.Router();
 
@@ -18,6 +19,7 @@ router.use('/parties', partyRoutes);
 router.use('/nominationDistricts', nominationDistrictRoutes);
 router.use('/constituencies', constituencyRoutes);
 router.use('/pollingStations', pollingStationRoutes);
+router.use('/keys', keyRoutes);
 
 
 export default router;
