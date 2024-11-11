@@ -12,10 +12,11 @@ import validationError, { checkIdsAndGiveErrors } from '../utils/validationError
 async function fetchCandidates(req, res) {
   try {
     const query = handleQuery(req.query, Candidate);
-    const candidates = await Candidate.find(query);
+    let candidates = await Candidate.find({...query, populate: null}).populate(query.populate);
+
     return res.status(200).json(candidates);
   } catch (error) {
-    if (error.message.includes('Invalid query parameter')) {
+    if (error.message.includes('Invalid query parameter') || error.message.includes('Invalid populate field')) {
       return res.status(400).json({
         error: error.message,
       });
