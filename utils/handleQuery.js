@@ -19,7 +19,6 @@ const handleQuery = (query, model) => {
 				queryObj[key] = sanitize(query[key]);
 			}
 		} else if (key === 'populate' && query[key]) {
-			console.log(query.populate);
 			queryObj.populate = query.populate.split(',').filter(field => model.schema.paths[field]);
 		} else {
 			throw Error(`Invalid query parameter: ${key}`);
