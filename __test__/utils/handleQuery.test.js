@@ -21,7 +21,7 @@ describe('handleQuery', () => {
 	});
 
 	it('should return an object with a populate key if defined in query', () => {
-		const query = { populate: true };
+		const query = { populate: 'name' };
 		const model = { schema: { paths: { name: {} } } };
 		const result = handleQuery(query, model);
 

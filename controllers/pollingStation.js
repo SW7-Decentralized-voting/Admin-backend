@@ -13,7 +13,7 @@ async function fetchPollingStations(req, res) {
 
 	try {
 		const query = handleQuery(req.query, PollingStation);
-		const pollingStations = await PollingStation.find(query);
+		const pollingStations = await PollingStation.find({...query, populate: null}).populate(query.populate);
 		
 		return res.status(200).json(pollingStations);
 	} catch (error) {

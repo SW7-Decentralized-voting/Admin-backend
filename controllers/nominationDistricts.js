@@ -12,7 +12,7 @@ import NominationDistrict from '../schemas/NominationDistrict.js';
 async function fetchNominationDistricts(req, res) {
 	try {
 		const query = handleQuery(req.query, NominationDistrict);
-		const nominationDistricts = await NominationDistrict.find(query);
+		const nominationDistricts = await NominationDistrict.find({...query, populate: null}).populate(query.populate);
 		return res.status(200).json(nominationDistricts);
 	} catch (error) {
 		if (error.message.includes('Invalid query parameter')) {
