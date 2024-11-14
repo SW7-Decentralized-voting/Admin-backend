@@ -96,7 +96,11 @@ describe('GET /', () => {
 	});
 
 	it('should return 500 Internal Server Error when an unexpected error occurs', async () => {
-		mockError('find');
+		const mockQuery = { find: jest.fn().mockReturnThis(), populate: jest.fn() };
+		jest.spyOn(PollingStation, 'find').mockReturnValue(mockQuery);
+		mockQuery.populate.mockImplementationOnce(() => {
+			throw new Error('Error during population');
+		});
 		const res = await request(app).get(baseRoute);
 		expect(res.status).toBe(500);
 		expect(res.body.error).toBe('An unexpected error occurred while fetching polling stations');

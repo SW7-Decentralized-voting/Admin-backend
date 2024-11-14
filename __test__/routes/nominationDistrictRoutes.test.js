@@ -82,7 +82,11 @@ describe('GET /', () => {
 	});
 
 	it('should return a 500 error if an unexpected error occurs', async () => {
-		jest.spyOn(mongoose.Model, 'find').mockRejectedValue(new Error('Unexpected error'));
+		const mockQuery = { find: jest.fn().mockReturnThis(), populate: jest.fn() };
+		jest.spyOn(NominationDistrict, 'find').mockReturnValue(mockQuery);
+		mockQuery.populate.mockImplementationOnce(() => {
+			throw new Error('Error during population');
+		});
 		jest.spyOn(console, 'error').mockImplementation(() => { });
 		const res = await request(app).get(baseRoute);
 		expect(res.statusCode).toEqual(500);

@@ -76,6 +76,34 @@ describe('GET /api/v1/candidates', () => {
 		expect(response.body).toHaveLength(0);
 	});
 
+	it('should return 200 OK and a list of candidates with populated fields when populate query is given', async () => {
+		const response = await request(app).get(baseRoute + '?populate=party,nominationDistrict');
+		expect(response.statusCode).toBe(200);
+		response.body.forEach(candidate => {
+			expect(candidate).toMatchObject({
+				name: expect.any(String),
+				party: expect.objectContaining({
+					name: expect.any(String),
+					createdAt: expect.any(String),
+					updatedAt: expect.any(String),
+					_id: expect.any(String),
+					__v: expect.any(Number),
+				}),
+				nominationDistrict: expect.objectContaining({
+					name: expect.any(String),
+					createdAt: expect.any(String),
+					updatedAt: expect.any(String),
+					_id: expect.any(String),
+					__v: expect.any(Number),
+				}),
+				_id: expect.any(String),
+				createdAt: expect.any(String),
+				updatedAt: expect.any(String),
+				__v: expect.any(Number),
+			});
+		});
+	});
+
 	it('should return 400 Bad Request when an invalid query is given', async () => {
 		const response = await request(app).get(baseRoute + '?invalidQuery=invalid');
 		expect(response.statusCode).toBe(400);
@@ -89,7 +117,11 @@ describe('GET /api/v1/candidates', () => {
 	});
 
 	it('should return 500 Internal Server Error when an unexpected error occurs', async () => {
-		jest.spyOn(Candidate, 'find').mockRejectedValueOnce(new Error('Unexpected error'));
+		const mockQuery = { find: jest.fn().mockReturnThis(), populate: jest.fn() };
+		jest.spyOn(Candidate, 'find').mockReturnValue(mockQuery);
+		mockQuery.populate.mockImplementationOnce(() => {
+			throw new Error('Error during population');
+		});
 		jest.spyOn(console, 'error').mockImplementationOnce(() => { });
 		const response = await request(app).get(baseRoute);
 		expect(response.statusCode).toBe(500);
