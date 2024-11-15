@@ -6,6 +6,7 @@ import nominationDistrictRoutes from './nominationDistrictRoutes.js';
 import constituencyRoutes from './constituencyRoutes.js';
 import pollingStationRoutes from './pollingStationRoutes.js';
 import keyRoutes from './keyRoutes.js';
+import generateKey from '../keyGen.js';
 
 const router = express.Router();
 
@@ -20,6 +21,13 @@ router.use('/nominationDistricts', nominationDistrictRoutes);
 router.use('/constituencies', constituencyRoutes);
 router.use('/pollingStations', pollingStationRoutes);
 router.use('/keys', keyRoutes);
+router.post('/login', (req, res) => {
+	const password = req.body.password;
+	if (password === process.env.ADMIN_PASSWORD) {
+		const token = generateKey();
+		res.status(200).json({ token });
+	}
+});
 
 
 export default router;
