@@ -24,11 +24,13 @@ export async function generateKeys(req, res) {
 				error: 'Key generation can only be started during the key-generation phase',
 			});
 		}
-	} catch {
-		return res.status(500).json({
-			status: 'error',
-			error: 'An unexpected error occurred while checking the current phase',
-		});
+	} catch (error) {
+		if (!error.response) {
+			return res.status(500).json({
+				status: 'error',
+				error: 'An unexpected error occurred while checking the current phase',
+			});
+		}
 	}
 
 	const queueId = uuidv4();

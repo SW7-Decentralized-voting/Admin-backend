@@ -75,6 +75,18 @@ describe('GET /api/v1/keys/generate', () => {
 		});
 	});
 
+	it('should return 202 Accepted when generating keys before election starts', async () => {
+		jest.spyOn(axios, 'get').mockRejectedValueOnce({ response: { data: { error: 'Election has not started' } } });
+
+		const response = await request(app).post(`${baseRoute}/generate`);
+
+		expect(response.statusCode).toBe(202);
+		expect(response.body).toEqual({
+			message: 'Key generation started',
+			statusLink: expect.stringMatching(/http:\/\/localhost:\d+\/api\/v1\/keys\/status\/[a-f0-9-]+/),
+		});
+	});
+
 	it('should return 400 Bad Request when generating keys with invalid polling stations', async () => {
 		const response = await request(app).post(`${baseRoute}/generate`).send({
 			pollingStations: ['60a6e1c3d9f4b6f3b8e2e7c7', '60a6e1c3d9f4b6f3b8e2e7c8'],
