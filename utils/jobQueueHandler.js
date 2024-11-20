@@ -27,6 +27,7 @@ export default async function jobHandler(job) {
 
 		await Key.insertMany(keys);
 	} catch (error) {
+		// eslint-disable-next-line no-console
 		console.error(`Error generating keys: ${error.message}`);
 		throw error;
 	}

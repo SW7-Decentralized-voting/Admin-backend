@@ -5,6 +5,7 @@ import connectDb from '../setup/connect.js';
 import { jest } from '@jest/globals';
 import populateDb from '../db/testPopulation.js';
 import PollingStation from '../../schemas/PollingStation.js';
+import axios from 'axios';
 
 let router;
 const baseRoute = '/api/v1/keys';
@@ -49,6 +50,7 @@ jest.unstable_mockModule('bull', () => {
 });
 
 describe('GET /api/v1/keys/generate', () => {
+	jest.spyOn(axios, 'get').mockResolvedValue({ data: { currentPhase: '0' } });
 	it('should return 202 Accepted when generating keys', async () => {
 		const response = await request(app).post(`${baseRoute}/generate`);
 
@@ -82,6 +84,31 @@ describe('GET /api/v1/keys/generate', () => {
 		expect(response.body).toEqual({
 			status: 'error',
 			error: 'Invalid polling station IDs: 60a6e1c3d9f4b6f3b8e2e7c7, 60a6e1c3d9f4b6f3b8e2e7c8',
+		});
+	});
+
+	it('should return 400 Bad Request when generating keys outside the key-generation phase', async () => {
+		jest.spyOn(axios, 'get').mockResolvedValueOnce({ data: { currentPhase: '1' } });
+
+		const response = await request(app).post(`${baseRoute}/generate`);
+
+		expect(response.statusCode).toBe(400);
+		expect(response.body).toEqual({
+			status: 'error',
+			error: 'Key generation can only be started during the key-generation phase',
+		});
+	});
+
+	it('should return 500 Internal Server Error when an unexpected error occurs', async () => {
+		jest.spyOn(axios, 'get').mockRejectedValue(new Error('Unexpected error'));
+		jest.spyOn(console, 'error').mockImplementation(() => { });
+
+		const response = await request(app).post(`${baseRoute}/generate`);
+
+		expect(response.statusCode).toBe(500);
+		expect(response.body).toEqual({
+			status: 'error',
+			error: 'An unexpected error occurred while checking the current phase',
 		});
 	});
 });
