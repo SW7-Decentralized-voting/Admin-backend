@@ -4,6 +4,7 @@ import process from 'process';
 import cors from './config/cors.js';
 import dotenv from 'dotenv';
 import { connectToDb } from './db/index.js';
+import electionRoutes from './routes/electionRoutes.js';
 
 dotenv.config();
 const app = express();
@@ -15,6 +16,7 @@ app.use(express.json());
 app.use(cors);
 app.use(express.json());
 app.use('/api/v1', router);
+app.use('/api/v1', electionRoutes);
 
 app.listen(PORT, async () => {
   // eslint-disable-next-line no-console
