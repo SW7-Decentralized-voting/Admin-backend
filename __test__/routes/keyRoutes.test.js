@@ -141,7 +141,7 @@ describe('GET /api/v1/keys/', () => {
 		expect(response.body).toEqual({
 			totalKeys: 18,
 		});
-	})
+	});
 
 	it('should return 500 Internal Server Error when an unexpected error occurs', async () => {
 		await testInternalServerError('get', `${baseRoute}/`, () => {
