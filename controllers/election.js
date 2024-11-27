@@ -66,6 +66,11 @@ async function advancePhase(res) {
     });
 }
 
+/**
+ * Fetch the current phase of the election from the blockchain
+ * @param {e.Response} res Express response object
+ * @returns {e.Response} The current phase of the election or an error message
+ */
 async function fetchPhase(res) {
   axios.get(`${url}/current-phase`)
     .then(response => {
