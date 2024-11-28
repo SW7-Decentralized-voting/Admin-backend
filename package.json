@@ -55,9 +55,7 @@
             "/__test__/",
             "/models/",
             "/config/",
-            "/schemas/",
-            "keyGen.js",
-            "routes/index.js"
+            "/schemas/"
         ],
         "globalSetup": "<rootDir>/__test__/setup/jest-setup.js",
         "globalTeardown": "<rootDir>/__test__/setup/jest-teardown.js",

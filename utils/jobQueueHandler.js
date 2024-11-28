@@ -7,30 +7,23 @@ import Key from '../schemas/Key.js';
  * @param {JobObj} job Job object with polling station ID and expected voters
  */
 export default async function jobHandler(job) {
-	try {
-		const { pollingStationId, expectedVoters } = job.data;
+	const { pollingStationId, expectedVoters } = job.data;
 
-		const station = await PollingStation.findById(pollingStationId);
-		if (!station) {
-			throw new Error('Polling station not found: ' + pollingStationId);
-		}
-
-		const keys = [];
-		for (let i = 0; i < expectedVoters; i++) {
-			const key = Key({
-				pollingStation: station._id,
-				keyHash: uuidv4(),
-				isUsed: false,
-			});
-			keys.push(key);
-		}
-
-		await Key.insertMany(keys);
-	} catch (error) {
-		// eslint-disable-next-line no-console
-		console.error(`Error generating keys: ${error.message}`);
-		throw error;
+	const station = await PollingStation.findById(pollingStationId);
+	if (!station) {
+		throw new Error('Polling station not found: ' + pollingStationId);
 	}
+
+	const keys = [];
+	for (let i = 0; i < expectedVoters; i++) {
+		const key = Key({
+			pollingStation: station._id,
+			keyHash: uuidv4(),
+		});
+		keys.push(key);
+	}
+
+	await Key.insertMany(keys);
 }
 
 /**
