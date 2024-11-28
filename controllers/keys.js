@@ -2,7 +2,6 @@ import PollingStation from '../schemas/PollingStation.js';
 import { v4 as uuidv4 } from 'uuid';
 import Queue from 'bull';
 import jobHandler from '../utils/jobQueueHandler.js';
-import axios from 'axios';
 
 const baseUrl = 'http://localhost:';
 const port = process.env.PORT || 8888;
@@ -15,24 +14,6 @@ const port = process.env.PORT || 8888;
  * @returns {Response} A message indicating that key generation has started
  */
 export async function generateKeys(req, res) {
-	try {
-		const phase = (await axios.get(process.env.BLOCKCHAIN_URL + '/election/current-phase')).data?.currentPhase;
-
-		if (phase !== '0') {
-			return res.status(400).json({
-				status: 'error',
-				error: 'Key generation can only be started during the key-generation phase',
-			});
-		}
-	} catch (error) {
-		if (!error.response) {
-			return res.status(500).json({
-				status: 'error',
-				error: 'An unexpected error occurred while checking the current phase',
-			});
-		}
-	}
-
 	const queueId = uuidv4();
 	let pollingStationIds = req.body.pollingStations;
 
