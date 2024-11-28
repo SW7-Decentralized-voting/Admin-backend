@@ -2,9 +2,10 @@ import request from 'supertest';
 import express from 'express';
 import mongoose from 'mongoose';
 import connectDb from '../setup/connect.js';
-import { jest } from '@jest/globals';
+import { describe, jest } from '@jest/globals';
 import populateDb from '../db/testPopulation.js';
 import PollingStation from '../../schemas/PollingStation.js';
+import Key from '../../schemas/Key.js';
 import axios from 'axios';
 
 let router;
@@ -48,6 +49,19 @@ jest.unstable_mockModule('bull', () => {
 		default: mockQueue,
 	};
 });
+
+const testInternalServerError = async (method, url, mockFunction, expectedMessage) => {
+	mockFunction();
+	jest.spyOn(console, 'error').mockImplementation(() => { });
+
+	const response = await request(app)[method](url);
+
+	expect(response.statusCode).toBe(500);
+	expect(response.body).toEqual({
+		status: 'error',
+		error: expectedMessage,
+	});
+};
 
 describe('GET /api/v1/keys/generate', () => {
 	jest.spyOn(axios, 'get').mockResolvedValue({ data: { currentPhase: '0' } });
@@ -112,16 +126,27 @@ describe('GET /api/v1/keys/generate', () => {
 	});
 
 	it('should return 500 Internal Server Error when an unexpected error occurs', async () => {
-		jest.spyOn(axios, 'get').mockRejectedValue(new Error('Unexpected error'));
-		jest.spyOn(console, 'error').mockImplementation(() => { });
+		await testInternalServerError('post', `${baseRoute}/generate`, () => {
+			jest.spyOn(axios, 'get').mockRejectedValue(new Error('Unexpected error'));
+		}, 'An unexpected error occurred while checking the current phase');
+	});
+});
 
-		const response = await request(app).post(`${baseRoute}/generate`);
+describe('GET /api/v1/keys/', () => {
+	it('should return the total number of keys', async () => {
+		Key.insertMany([...Array(18)].map(() => ({ pollingStation: new mongoose.Types.ObjectId(), keyHash: 'hash' })));
+		const response = await request(app).get(`${baseRoute}/`);
 
-		expect(response.statusCode).toBe(500);
+		expect(response.statusCode).toBe(200);
 		expect(response.body).toEqual({
-			status: 'error',
-			error: 'An unexpected error occurred while checking the current phase',
+			totalKeys: 18,
 		});
+	});
+
+	it('should return 500 Internal Server Error when an unexpected error occurs', async () => {
+		await testInternalServerError('get', `${baseRoute}/`, () => {
+			jest.spyOn(Key, 'countDocuments').mockRejectedValue(new Error('Unexpected error occurred'));
+		}, 'An unexpected error occurred while fetching the total number of keys');
 	});
 });
 
@@ -142,6 +167,8 @@ describe('GET /api/v1/keys/status/:queueId', () => {
 });
 
 afterAll(async () => {
+	await PollingStation.deleteMany({});
+	await Key.deleteMany({});
 	await mongoose.connection.close();
 	server.close();
 });
