@@ -64,6 +64,7 @@ const testInternalServerError = async (method, url, mockFunction, expectedMessag
 };
 
 describe('GET /api/v1/keys/generate', () => {
+	jest.spyOn(axios, 'get').mockResolvedValue({ data: { currentPhase: '0' } });
 	it('should return 202 Accepted when generating keys', async () => {
 		const response = await request(app).post(`${baseRoute}/generate`);
 
@@ -80,6 +81,18 @@ describe('GET /api/v1/keys/generate', () => {
 		const response = await request(app).post(`${baseRoute}/generate`).send({
 			pollingStations: [pollingStation._id],
 		});
+
+		expect(response.statusCode).toBe(202);
+		expect(response.body).toEqual({
+			message: 'Key generation started',
+			statusLink: expect.stringMatching(/http:\/\/localhost:\d+\/api\/v1\/keys\/status\/[a-f0-9-]+/),
+		});
+	});
+
+	it('should return 202 Accepted when generating keys before election starts', async () => {
+		jest.spyOn(axios, 'get').mockRejectedValueOnce({ response: { data: { error: 'Election has not started' } } });
+
+		const response = await request(app).post(`${baseRoute}/generate`);
 
 		expect(response.statusCode).toBe(202);
 		expect(response.body).toEqual({
