@@ -30,16 +30,16 @@ jest.unstable_mockModule('../../middleware/verifyToken.js', () => {
 });
 
 describe('POST /api/v1/elections/start', () => {
-	 const testStartElection = async (expectedStatus, mockResponse, expectedMessage) => {
+	const testStartElection = async (expectedStatus, mockResponse, expectedMessage) => {
 		const spy = jest.spyOn(axios, 'post').mockImplementation(() => {
 			if (expectedStatus === 200) {
 				return Promise.resolve(mockResponse);
 			}
 			return Promise.reject(mockResponse);
 		});
-		
+
 		const response = await request(app).post(`${baseRoute}/start`);
-	
+
 		expect(response.statusCode).toBe(expectedStatus);
 		if (expectedStatus === 200) {
 			expect(response.body.message).toBe(expectedMessage);
@@ -63,9 +63,6 @@ describe('POST /api/v1/elections/start', () => {
 		const pubKey = keyPair.publicKey;
 		const privKey = keyPair;
 
-		// console.log(keyPair);
-
-		// Ensure that private key has string lambda, mu and publicKey has string n, g
 		expect(typeof privKey.lambda).toBe('string');
 		expect(typeof privKey.mu).toBe('string');
 		expect(typeof pubKey.n).toBe('string');
@@ -79,7 +76,7 @@ describe('POST /api/v1/elections/start', () => {
 	});
 
 	it('should return 500 Internal Server Error when blockchain service is unreachable', async () => {
-		jest.spyOn(axios, 'post').mockRejectedValue({ });
+		jest.spyOn(axios, 'post').mockRejectedValue({});
 		const response = await request(app).post(`${baseRoute}/start`);
 		expect(response.statusCode).toBe(500);
 		expect(response.body.error).toBe('Blockchain service cannot be reached');
@@ -117,7 +114,7 @@ describe('POST /api/v1/elections/advance-phase', () => {
 	});
 
 	it('should return 500 Internal Server Error when blockchain service is unreachable', async () => {
-		jest.spyOn(axios, 'post').mockRejectedValue({ });
+		jest.spyOn(axios, 'post').mockRejectedValue({});
 		const response = await request(app).post(`${baseRoute}/advance-phase`);
 		expect(response.statusCode).toBe(500);
 		expect(response.body.error).toBe('Blockchain service cannot be reached');
@@ -168,7 +165,7 @@ describe('GET /api/v1/elections/phase', () => {
 	});
 
 	it('should return 500 Internal Server Error when blockchain service is unreachable', async () => {
-		jest.spyOn(axios, 'get').mockRejectedValue({ });
+		jest.spyOn(axios, 'get').mockRejectedValue({});
 		const response = await request(app).get(`${baseRoute}/phase`);
 		expect(response.statusCode).toBe(500);
 		expect(response.body.error).toBe('Blockchain service cannot be reached');
