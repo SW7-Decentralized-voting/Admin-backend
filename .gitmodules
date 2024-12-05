@@ -1,3 +1,4 @@
 [submodule "schemas"]
 	path = schemas
 	url = https://github.com/SW7-Decentralized-voting/shared-schema.git
+	branch = new-keypair

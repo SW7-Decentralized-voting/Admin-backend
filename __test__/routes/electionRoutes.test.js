@@ -61,10 +61,15 @@ describe('POST /api/v1/elections/start', () => {
 		await request(app).post(`${baseRoute}/start`);
 		const keyPair = await KeyPair.findOne();
 		const pubKey = keyPair.publicKey;
-		const privKey = keyPair.privateKey;
+		const privKey = keyPair;
 
-		expect(pubKey).toEqual(expect.stringMatching(/-----BEGIN PUBLIC KEY-----(.|\n)+-----END PUBLIC KEY-----\n/));
-		expect(privKey).toEqual(expect.stringMatching(/-----BEGIN PRIVATE KEY-----(.|\n)+-----END PRIVATE KEY-----\n/));
+		// console.log(keyPair);
+
+		// Ensure that private key has string lambda, mu and publicKey has string n, g
+		expect(typeof privKey.lambda).toBe('string');
+		expect(typeof privKey.mu).toBe('string');
+		expect(typeof pubKey.n).toBe('string');
+		expect(typeof pubKey.g).toBe('string');
 
 		await KeyPair.deleteMany();
 	});

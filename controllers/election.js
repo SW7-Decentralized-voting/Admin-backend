@@ -15,12 +15,26 @@ const url = process.env.BLOCKCHAIN_URL + '/election';
  * @returns {e.Response} Success or error message
  */
 async function startElection(res) {
-  let candidates, parties, keyPair;
+  let candidates, parties, publicKey, privateKey, publicKeyString;
   try {
     candidates = await getAllCandidates();
     parties = await getAllParties();
-    keyPair = await getKeyPair();
-    KeyPair({ publicKey: keyPair.publicKey, privateKey: keyPair.privateKey }).save();
+    ({ publicKey, privateKey } = await getKeyPair());
+
+    KeyPair({
+      lambda: privateKey.lambda.toString(),
+      mu: privateKey.mu.toString(),
+      publicKey: {
+        n: publicKey.n.toString(),
+        g: publicKey.g.toString()
+      }
+    }).save();
+
+    publicKeyString = JSON.stringify({
+      n: publicKey.n.toString(),
+      g: publicKey.g.toString()
+    });
+
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }
@@ -29,7 +43,7 @@ async function startElection(res) {
     // Add body with all candidates and parties
     candidates: candidates,
     parties: parties,
-    publicKey: keyPair.publicKey
+    publicKey: publicKeyString
   })
     .then(response => {
       return res.status(200).json(response.data);
