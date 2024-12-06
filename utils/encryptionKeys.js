@@ -2,7 +2,7 @@ import * as paillierBigint from 'paillier-bigint';
 
 /**
  * 
- * @returns {object} A key pair for the Paillier cryptosystem
+ * @returns {Promise<paillierBigint.KeyPair>} A promise that resolves to a key pair
  */
 async function getKeyPair() {
 	return paillierBigint.generateRandomKeys(2048);
