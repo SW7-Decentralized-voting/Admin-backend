@@ -22,6 +22,7 @@ router.use('/nominationDistricts', nominationDistrictRoutes);
 router.use('/constituencies', constituencyRoutes);
 router.use('/pollingStations', pollingStationRoutes);
 router.use('/keys', keyRoutes);
+router.use('/tally', tallyRoutes);
 router.post('/login', (req, res) => {
 	const password = req.body.password;
 	if (password === process.env.ADMIN_PASSWORD) {
