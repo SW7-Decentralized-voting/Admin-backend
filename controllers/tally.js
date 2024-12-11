@@ -19,7 +19,7 @@ async function tallyVotes(res) {
                 error: 'No private key found',
             });
         }
-        const response = axios.post(url, {
+        const response = await axios.post(url, {
             privateKey: privateKey.privateKey,
         });
         return res.status(200).json({
