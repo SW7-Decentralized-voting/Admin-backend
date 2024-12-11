@@ -19,16 +19,10 @@ async function tallyVotes(res) {
                 error: 'No private key found',
             });
         }
-        const publicKey = mongoKey.publicKey;
-        const privateKey = {
-            lambda: mongoKey.lambda,
-            mu: mongoKey.mu,
-            publicKey: publicKey
-        };
         // eslint-disable-next-line no-console
         console.log(mongoKey);
         const response = await axios.post(url, {
-            privateKey: privateKey,
+            privateKey: mongoKey,
         });
         return res.status(200).json({
             message: 'Votes tallied successfully',
