@@ -6,6 +6,7 @@ import nominationDistrictRoutes from './nominationDistrictRoutes.js';
 import constituencyRoutes from './constituencyRoutes.js';
 import pollingStationRoutes from './pollingStationRoutes.js';
 import keyRoutes from './keyRoutes.js';
+import tallyRoutes from './tallyRoutes.js';
 import generateKey from '../keyGen.js';
 
 const router = express.Router();
