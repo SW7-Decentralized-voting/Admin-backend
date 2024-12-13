@@ -1,5 +1,3 @@
-// Tests for /utils/handleQuery.js
-
 import handleQuery from '../../utils/handleQuery.js';
 
 describe('handleQuery', () => {

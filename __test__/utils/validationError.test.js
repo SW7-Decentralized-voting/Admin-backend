@@ -1,5 +1,3 @@
-// Make tests for the validationError function in utils/validationError.js
-
 import validationError, { checkIdsAndGiveErrors, validateSingleObjectId } from '../../utils/validationError.js';
 
 describe('validationError', () => {
