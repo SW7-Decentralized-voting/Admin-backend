@@ -36,36 +36,33 @@ const mongoDbFields = {
 };
 
 describe('GET /api/v1/parties', () => {
-	it('should return 200 OK and all parties when no query is given', async () => {
-		const response = await request(app).get(baseRoute);
-		expect(response.statusCode).toBe(200);
-		expect(response.body.length).toBe(mockData.parties.length);
-		response.body.forEach((party) => {
-			expect(party).toMatchObject({
-				...mongoDbFields,
-				name: expect.any(String),
-				list: expect.any(String),
-			});
+	const testGetParties = async (query, expectedStatus, expectedLength, expectedBody) => {
+		const response = await request(app).get(`${baseRoute}${query}`);
+		expect(response.statusCode).toBe(expectedStatus);
+		expect(response.body.length).toBe(expectedLength);
+		response.body.forEach((party, index) => {
+			expect(party).toMatchObject(expectedBody[index]);
 		});
+	};
+
+	it('should return 200 OK and all parties when no query is given', async () => {
+		await testGetParties('', 200, mockData.parties.length, mockData.parties.map(party => ({
+			...mongoDbFields,
+			name: expect.any(String),
+			list: expect.any(String),
+		})));
 	});
 
 	it('should return 200 OK and filtered parties when a query is given', async () => {
-		const response = await request(app).get(`${baseRoute}?list=U`);
-		expect(response.statusCode).toBe(200);
-		expect(response.body.length).toBe(1);
-		response.body.forEach((party) => {
-			expect(party).toMatchObject({
-				...mongoDbFields,
-				name: expect.any(String),
-				list: 'U',
-			});
-		});
+		await testGetParties('?list=U', 200, 1, [{
+			...mongoDbFields,
+			name: expect.any(String),
+			list: 'U',
+		}]);
 	});
 
 	it('should return 200 OK and an empty array when no parties match the query', async () => {
-		const response = await request(app).get(`${baseRoute}?list=Z`);
-		expect(response.statusCode).toBe(200);
-		expect(response.body).toEqual([]);
+		await testGetParties('?list=Z', 200, 0, []);
 	});
 
 	it('should return 400 Bad Request when an invalid query is given', async () => {
@@ -90,103 +87,80 @@ describe('GET /api/v1/parties', () => {
 });
 
 describe('POST /api/v1/parties', () => {
+	const testPostParty = async (partyData, expectedStatus, expectedBody) => {
+		const response = await request(app).post(baseRoute).send(partyData);
+		expect(response.statusCode).toBe(expectedStatus);
+		expect(response.body).toMatchObject(expectedBody);
+	};
+
 	it('should return 201 Created when party fields are valid', async () => {
-		const response = await request(app).post(baseRoute).send({
+		await testPostParty({
 			name: 'New Party',
 			list: 'P',
+		}, 201, {
+			message: 'Party added successfully',
+			party: {
+				name: 'New Party',
+				list: 'P',
+				...mongoDbFields,
+			},
 		});
-		expect(response.statusCode).toBe(201);
-		expect(response.body.message).toBe('Party added successfully');
-		expect(response.body.party).toMatchObject({
+	});
+
+	it('should return 400 Bad Request when party fields are missing', async () => {
+		await testPostParty({}, 400, {
+			errors: {
+				name: 'name is required',
+				list: 'list is required',
+			},
+		});
+		await testPostParty({
 			name: 'New Party',
-			list: 'P',
-			...mongoDbFields,
+		}, 400, {
+			errors: {
+				list: 'list is required',
+			},
 		});
 	});
 
-	it('should return 400 Bad Request when party fields are missing (1)', async () => {
-		const response = await request(app).post(baseRoute).send({});
-		expect(response.statusCode).toBe(400);
-		expect(response.body.errors).toEqual({
-			name: 'name is required',
-			list: 'list is required',
-		});
-	});
+	const invalidPartyFields = [
+		{
+			data: { name: 'New Party', list: 5 },
+			errors: { list: 'List must be a one letter (uppercase) string.' },
+		},
+		{
+			data: { name: 'New Party', list: 'invalid' },
+			errors: { list: 'List must be a one letter (uppercase) string.' },
+		},
+		{
+			data: { name: 'Pa', list: 'A' },
+			errors: { name: 'Name must be longer than 2 characters.' },
+		},
+		{
+			data: { name: 'New Party And A Lot Of Other Characters Making It Longer Than 100 Characters Which Is The Maximum Allowed', list: 'P' },
+			errors: { name: 'Name must be shorter than 100 characters.' },
+		},
+		{
+			data: { name: {}, list: 'P' },
+			errors: { name: '\'[object Object]\' (type Object) is not a valid string' },
+		},
+	];
 
-	it('should return 400 Bad Request when party fields are missing (2)', async () => {
-		const response = await request(app).post(baseRoute).send({
-			name: 'New Party',
-		});
-		expect(response.statusCode).toBe(400);
-		expect(response.body.errors).toEqual({
-			list: 'list is required',
-		});
-	});
-
-	it('should return 400 Bad Request when party fields are invalid (1)', async () => {
-		const response = await request(app).post(baseRoute).send({
-			name: 'New Party',
-			list: 5,
-		});
-		expect(response.statusCode).toBe(400);
-		expect(response.body.errors).toEqual({
-			list: 'List must be a one letter (uppercase) string.',
-		});
-	});
-
-	it('should return 400 Bad Request when party fields are invalid (2)', async () => {
-		const response = await request(app).post(baseRoute).send({
-			name: 'New Party',
-			list: 'invalid',
-		});
-		expect(response.statusCode).toBe(400);
-		expect(response.body.errors).toEqual({
-			list: 'List must be a one letter (uppercase) string.',
-		});
-	});
-
-	it('should return 400 Bad Request when party fields are invalid (3)', async () => {
-		const response = await request(app).post(baseRoute).send({
-			name: 'Pa',
-			list: 'A',
-		});
-		expect(response.statusCode).toBe(400);
-		expect(response.body.errors).toEqual({
-			name: 'Name must be longer than 2 characters.',
-		});
-	});
-
-	it('should return 400 Bad Request when party fields are invalid (4)', async () => {
-		const response = await request(app).post(baseRoute).send({
-			name: 'New Party And A Lot Of Other Characters Making It Longer Than 100 Characters Which Is The Maximum Allowed',
-			list: 'P',
-		});
-		expect(response.statusCode).toBe(400);
-		expect(response.body.errors).toEqual({
-			name: 'Name must be shorter than 100 characters.',
-		});
-	});
-
-	it('should return 400 Bad Request when party fields are invalid (5)', async () => {
-		const response = await request(app).post(baseRoute).send({
-			name: {},
-			list: 'P',
-		});
-		expect(response.statusCode).toBe(400);
-		expect(response.body.errors).toEqual({
-			name: '\'[object Object]\' (type Object) is not a valid string',
+	invalidPartyFields.forEach(({ data, errors }, index) => {
+		it(`should return 400 Bad Request when party fields are invalid (${index + 1})`, async () => {
+			await testPostParty(data, 400, { errors });
 		});
 	});
 
 	it('should return 500 Internal Server Error when an unexpected error occurs', async () => {
 		jest.spyOn(Party.prototype, 'save').mockRejectedValue(new Error('Unexpected error'));
 		jest.spyOn(console, 'error').mockImplementation(() => {});
-		const response = await request(app).post(baseRoute).send({
+		await testPostParty({
 			name: 'New Party',
 			list: 'P',
+		}, 500, {
+			error: 'An unexpected error occurred while adding the party',
 		});
-		expect(response.statusCode).toBe(500);
-		expect(response.body.error).toBe('An unexpected error occurred while adding the party');
 	});
 });
 
