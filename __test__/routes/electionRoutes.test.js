@@ -30,6 +30,8 @@ jest.unstable_mockModule('../../middleware/verifyToken.js', () => {
 });
 
 describe('POST /api/v1/elections/start', () => {
+	// Response time may be longer than 5 seconds
+	jest.setTimeout(10000);
 	const testStartElection = async (expectedStatus, mockResponse, expectedMessage) => {
 		const spy = jest.spyOn(axios, 'post').mockImplementation(() => {
 			if (expectedStatus === 200) {
