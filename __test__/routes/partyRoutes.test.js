@@ -46,6 +46,7 @@ describe('GET /api/v1/parties', () => {
 	};
 
 	it('should return 200 OK and all parties when no query is given', async () => {
+		// eslint-disable-next-line no-unused-vars
 		await testGetParties('', 200, mockData.parties.length, mockData.parties.map(party => ({
 			...mongoDbFields,
 			name: expect.any(String),
